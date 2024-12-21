@@ -8,6 +8,7 @@ const ColorFilter = ({title, dbColor, listColorChoice, dispatchListColorChoice})
         <View className='h-[88px] px-[16px] bg-[#fff] flex flex-row items-center'>
           <FlatList
             data={dbColor}
+            scrollEnabled={false}
             keyExtractor={item => item.id}
             horizontal
             ItemSeparatorComponent={() => <TouchableOpacity className='mx-[9px]'></TouchableOpacity>}

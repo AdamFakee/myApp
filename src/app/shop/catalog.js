@@ -1,6 +1,5 @@
-import { Image, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, SafeAreaView, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import ShowItemOneColumn from '../../components/shop.component/categoryDetail.shop.component/ShowItemOneColumn'
 import ShowItemTwoColumn from '../../components/shop.component/categoryDetail.shop.component/ShowItemTwoColumn'
@@ -104,7 +103,7 @@ const Catalog = () => {
   }
 
   return (
-    <SafeAreaView className='flex-1 pb-[85px]'>
+    <SafeAreaView className='flex-1'>
       {/* top */}
       <HeaderTop isShowOneColumn={isShowOneColumn} setIsShowOneColumn={setIsShowOneColumn} categories={categories} handleClickFilter={handleClickFilter}/>
       {/* product item */}

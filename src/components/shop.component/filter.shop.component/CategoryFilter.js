@@ -11,6 +11,7 @@ const CategoryFilter = ({title, dbCategory, listCategoryChoice, dispatchListCate
         <View className='py-[24px] px-[16px] bg-[#fff] flex flex-row'>
             <FlatList
                 data={dbCategory}
+                scrollEnabled={false}
                 keyExtractor={item => item.id}
                 numColumns={3}
                 columnWrapperStyle = {{

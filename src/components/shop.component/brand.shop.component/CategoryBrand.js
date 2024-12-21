@@ -4,10 +4,11 @@ import CheckboxCategory from './CheckboxCategory';
 
 const CategoryBrand = ({dbCategory, listCategoryChoosen, dispatchListCategoryChoosen}) => {
   return (
-    <View >
+    <View className='flex-1'>
       <FlatList
         data={dbCategory}
         keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={<View className='mb-[8px]'></View>}
         renderItem={({item}) => <CheckboxCategory 
                                   item={item} 

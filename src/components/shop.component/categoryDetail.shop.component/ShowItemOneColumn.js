@@ -10,7 +10,7 @@ const ShowItemOneColumn = ({handleClickDetailItem}) => {
         key={'list'} // Key cố định khi là 1 cột
         keyExtractor={item => item.id}
         ItemSeparatorComponent={() => <View className='my-[13px]'></View>}
-        className='h-full'
+        showsVerticalScrollIndicator={false}
         renderItem={({item}) => {
             return (
                 <View className='h-[104px] w-full flex flex-row justify-start items-center bg-[#FFFFFF] rounded-[8px] relative' >

@@ -75,11 +75,32 @@ const Brand = () => {
   const {listBrand, setListBrand} = useShopContext();
   const [searchBrandValue, setSearchBrandValue] = useState("");
   const [listCategoryChoosen, dispatchListCategoryChoosen] = useReducer(filterItemReducer ,listBrand);
+  const [isApply, setIsApply] = useState(false);
+  const [isDiscard, setIsDiscard] = useState(false);
+
+  // confirm => save
   useEffect(() => {
-    setListBrand(listCategoryChoosen);
-  }, [listCategoryChoosen]);
+    if(isApply) {
+      setListBrand(listCategoryChoosen);
+      setIsApply(false)
+      navigation.goBack();
+    }
+  }, [isApply]);
+
+  useEffect(() => {
+    if(isDiscard) {
+      dispatchListCategoryChoosen({
+        type : 'reset',
+      })
+      setIsDiscard(false)
+    }
+  }, [isDiscard]);
+  
+  // End confirm => save
+
+  
   return (
-    <SafeAreaView className='flex-1 pb-[82px] '>
+    <SafeAreaView className='flex-1'>
       <View className='flex-1 px-[16px]'>
         {/* search */}
         <SearchBrand searchBrandValue={searchBrandValue} setSearchBrandValue={setSearchBrandValue}/>
@@ -91,7 +112,7 @@ const Brand = () => {
           dispatchListCategoryChoosen={dispatchListCategoryChoosen}
         />
       </View>
-      <ConfirmButton/>
+      <ConfirmButton isApply={isApply} isDiscard={isDiscard} setIsApply={setIsApply} setIsDiscard={setIsDiscard} />
     </SafeAreaView>
   )
 }

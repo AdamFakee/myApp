@@ -11,6 +11,8 @@ const SearchBrand = ({searchBrandValue, setSearchBrandValue}) => {
       />
       <TextInput
         placeholder='Search'
+        autoCorrect={false}
+        autoCapitalize='none'
         value={searchBrandValue}
         onChangeText={value => setSearchBrandValue(value)}
         className='text-[16px] text-[#9B9B9B] font-[400] flex-1'

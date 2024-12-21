@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ColorFilter from '../../components/shop.component/filter.shop.component/ColorFilter';
 import SizeFilter from '../../components/shop.component/filter.shop.component/SizeFilter';
@@ -7,6 +7,9 @@ import BrandFilter from '../../components/shop.component/filter.shop.component/B
 import { useNavigation } from '@react-navigation/native';
 import filterItemReducer from '../../reducer/filterItem.reducer';
 import { useShopContext } from '../../context/ShopProvider';
+import { ScrollView, View } from 'react-native';
+import ConfirmButton from '../../components/shop.component/brand.shop.component/ConfirmButton';
+import PriceSlide from '../../components/shop.component/filter.shop.component/PriceSlide';
 
 
 
@@ -31,7 +34,7 @@ const Filter = () => {
     },
     {
       id : 5,
-      color : '#E2BB8D'
+      color : '#E28D'
     },
     {
       id : 6,
@@ -82,7 +85,6 @@ const Filter = () => {
       title : 'gilrs' 
     }
   ]
-  const brandChoosen = 'adidas Originals, Jack & Jones, s.Oliver'
   // End db
 
   // hidden tabber when are in this screen
@@ -100,15 +102,16 @@ const Filter = () => {
         }
       });
     }
-  }, [])
+  })
     // End set header title
-
-  const {listSize, setListSize, listCategory, setListCategory, listColor, setListColor} = useShopContext();
-  
+  const {listSize, setListSize, listCategory, setListCategory, listColor, setListColor, listBrand, isConfirm, setIsConfirm, price, setPrice, resetAllStates} = useShopContext();
+  let brandChoosen = listBrand.map(item => item.title).join(', '); // content show below "brand" title
   const [listColorChoice, dispatchListColorChoice] = useReducer(filterItemReducer, listColor);
   const [listSizeChoice, dispatchListSizeChoice] = useReducer(filterItemReducer, listSize);
   const [listCategoryChoice, dispatchListCategoryChoice] = useReducer(filterItemReducer, listCategory);
-  
+  const [isApply, setIsApply] = useState(false);
+  const [isDiscard, setIsDiscard] = useState(false);
+
   useEffect(() => {
       setListCategory(listCategoryChoice);
     }, [listCategoryChoice]);
@@ -123,19 +126,50 @@ const Filter = () => {
     navigation.navigate('Brand');
   }
 
+
+  useEffect(() => {
+    if(isApply) {
+      setIsConfirm(!isConfirm)
+      navigation.replace('Catalog');
+      setIsApply(false)
+    }
+  }, [isApply]);
+  useEffect(() => {
+    if(isDiscard) {
+      resetAllStates();
+      dispatchListColorChoice({
+        type : 'reset',
+      })
+      dispatchListSizeChoice({
+        type : 'reset',
+      })
+      dispatchListCategoryChoice({
+        type : 'reset',
+      })
+      brandChoosen = '';
+      setIsDiscard(false)
+    }
+  }, [isDiscard]);
+
   return (
-    <SafeAreaView>
-      {/* color */}
-      <ColorFilter dbColor={dbColor} title='color' listColorChoice={listColorChoice} dispatchListColorChoice={dispatchListColorChoice}/>
+    <SafeAreaView className='flex-1'>
+      <ScrollView className='flex-1' >
+        {/* price slide */}
+        <PriceSlide minPrice={0} maxPrice={1000} isApply={isApply} setPrice={setPrice} price={price} setIsApply={setIsApply}/>
 
-      {/* size */}
-      <SizeFilter dbSize={dbSize} title='size' listSizeChoice={listSizeChoice} dispatchListSizeChoice={dispatchListSizeChoice}/>
+        {/* color */}
+        <ColorFilter dbColor={dbColor} title='color' listColorChoice={listColorChoice} dispatchListColorChoice={dispatchListColorChoice}/>
 
-      {/* category */}
-      <CategoryFilter dbCategory={dbCategory} title='category' listCategoryChoice={listCategoryChoice} dispatchListCategoryChoice={dispatchListCategoryChoice}/>
+        {/* size */}
+        <SizeFilter dbSize={dbSize} title='size' listSizeChoice={listSizeChoice} dispatchListSizeChoice={dispatchListSizeChoice}/>
 
-      {/* Brand */}
-      <BrandFilter brandChoosen={brandChoosen} handleBrand={handleBrand}/>
+        {/* category */}
+        <CategoryFilter dbCategory={dbCategory} title='category' listCategoryChoice={listCategoryChoice} dispatchListCategoryChoice={dispatchListCategoryChoice}/>
+
+        {/* Brand */}
+        <BrandFilter brandChoosen={brandChoosen} handleBrand={handleBrand}/>
+      </ScrollView>
+      <ConfirmButton isApply={isApply} isDiscard={isDiscard} setIsApply={setIsApply} setIsDiscard={setIsDiscard} />
     </SafeAreaView>
   )
 }

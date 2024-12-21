@@ -10,6 +10,7 @@ const SizeFilter = ({title, dbSize, listSizeChoice, dispatchListSizeChoice}) => 
             data={dbSize}
             keyExtractor={item => item.id}
             horizontal
+            scrollEnabled={false}
             ItemSeparatorComponent={() => <TouchableOpacity className='mx-[9px]'></TouchableOpacity>}
             renderItem={({item}) => {
                 return (
