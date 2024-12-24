@@ -1,14 +1,24 @@
-import { Image, SafeAreaView, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Image, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState ,useCallback, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import ShowItemOneColumn from '../../components/shop.component/categoryDetail.shop.component/ShowItemOneColumn'
 import ShowItemTwoColumn from '../../components/shop.component/categoryDetail.shop.component/ShowItemTwoColumn'
 import HeaderTop from '../../components/shop.component/categoryDetail.shop.component/HeaderTop'
 import img from '../../constant/img'
+import CustomBottomSheetModal from '../../components/shop.component/categoryDetail.shop.component/BottomSheetModal'
+
 
 const Catalog = () => {
+  // show one or two column
   const [isShowOneColumn, setIsShowOneColumn] = useState(false);
+
+  // search item
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
+  // call api => lấy cái đầu tiên là được, còn đây để tạmtạm
+  const [filterSortedTitle, setFilterSortedTitle] = useState({
+    id : 4,
+    title : 'Price: lowest to high'
+  });
   // data fake
   const categories = [
     {
@@ -32,10 +42,32 @@ const Catalog = () => {
       title : "t-shirts"
     }
   ]
+  const filterSorted = [
+    {
+      id : 1,
+      title : 'Popular'
+    },
+    {
+      id : 2,
+      title : 'Newest'
+    },
+    {
+      id : 3,
+      title : 'Customer review'
+    },
+    {
+      id : 4,
+      title : 'Price: lowest to high'
+    },
+    {
+      id : 5,
+      title : 'Price: highest to low'
+    },
+  ]
   // End data fake
 
   // set header title 
-  const titleHeader = "women's top";
+  const titleHeader = "women's top"; // static title
   const navigation = useNavigation();
 
   // set header title
@@ -91,6 +123,7 @@ const Catalog = () => {
     })
   }, [isSearchButtonClicked])
 
+  // go to ItemDetail screen to see all about item's information 
   const handleClickDetailItem = (idItem, titleHeader) => {
     navigation.navigate('HomeTabBar', {
       screen : "ItemDetail",
@@ -98,24 +131,38 @@ const Catalog = () => {
     });
   }
 
+  // change type filter
   const handleClickFilter = () => {
     navigation.navigate('Filter');
   }
 
+  // ref
+  const bottomSheetModalRef = useRef(null); 
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  
+  // choose sorted type
+  const handleChooseSortedType = (item) => {
+    setFilterSortedTitle(item);
+  }
+
+  // renders
   return (
-    <SafeAreaView className='flex-1'>
-      {/* top */}
-      <HeaderTop isShowOneColumn={isShowOneColumn} setIsShowOneColumn={setIsShowOneColumn} categories={categories} handleClickFilter={handleClickFilter}/>
+    <View className="flex-1">
+      <HeaderTop isShowOneColumn={isShowOneColumn} setIsShowOneColumn={setIsShowOneColumn} categories={categories} handleClickFilter={handleClickFilter} handlePresentModalPress={handlePresentModalPress} filterSortedTitle={filterSortedTitle}/>
       {/* product item */}
       <View className='px-[16px] mt-[16px] flex-1'>
         {
           isShowOneColumn == false ? <ShowItemOneColumn handleClickDetailItem={handleClickDetailItem}/> : <ShowItemTwoColumn handleClickDetailItem={handleClickDetailItem}/>
         }
       </View>
-    </SafeAreaView>
-  )
-}
+      <CustomBottomSheetModal filterSorted={filterSorted} bottomSheetModalRef={bottomSheetModalRef} filterSortedTitle={filterSortedTitle} handleChooseSortedType={handleChooseSortedType}/>
+    </View>
+  );
+};
 
 
-
-export default Catalog
+export default Catalog;

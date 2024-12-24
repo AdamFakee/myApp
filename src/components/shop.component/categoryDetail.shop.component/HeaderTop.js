@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react
 import React from 'react'
 import img from '../../../constant/img'
 
-const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClickFilter}) => {
+const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClickFilter, handlePresentModalPress, filterSortedTitle}) => {
   return (
     <View 
         className='py-[10px] px-[16px] bg-[#fff]'
@@ -43,11 +43,13 @@ const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClick
 
             {/* price */}
             <View className='flex-1'>
-                <TouchableOpacity className='flex flex-row gap-[11px] justify-center items-center'>
+                <TouchableOpacity className='flex flex-row gap-[11px] justify-center items-center'
+                    onPress={() => handlePresentModalPress()}
+                >
                     <Image
                         source={img.twoArrow}
                     />
-                    <Text>Price: lowest to high</Text>
+                    <Text>{filterSortedTitle.title}</Text>
                 </TouchableOpacity>
             </View>
 

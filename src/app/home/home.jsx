@@ -13,9 +13,8 @@ const Home = () => {
     navigation.navigate('ItemDetail', {idItem, titleHeader});
   }
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content"/>
+    <View className='flex-1'>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="space-y-[40px]">
           {/* banner */}
           <View className='w-full relative '>
@@ -56,7 +55,7 @@ const Home = () => {
           {/* End new product item */}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 

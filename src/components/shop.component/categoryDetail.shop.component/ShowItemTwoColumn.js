@@ -14,8 +14,10 @@ const ShowItemTwoColumn = ({handleClickDetailItem}) => {
         columnWrapperStyle={{
             justifyContent: 'space-between', // Khoảng cách ngang giữa các cột
         }}
+        contentContainerStyle={{
+        }}
         showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View className='my-[13px]'></View>}
+        // ItemSeparatorComponent={() => <View className='my-[5px]'></View>}
         numColumns={2}
         key={'grid'} // Key cố định khi là 2 cột
         renderItem={({item}) => {

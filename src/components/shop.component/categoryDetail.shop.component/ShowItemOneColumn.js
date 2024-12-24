@@ -7,6 +7,9 @@ const ShowItemOneColumn = ({handleClickDetailItem}) => {
   return (
     <FlatList
         data={productItem}
+        contentContainerStyle={{
+            paddingBottom: 26, // Add padding to the whole list
+        }}
         key={'list'} // Key cố định khi là 1 cột
         keyExtractor={item => item.id}
         ItemSeparatorComponent={() => <View className='my-[13px]'></View>}
