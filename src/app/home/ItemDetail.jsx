@@ -1,5 +1,5 @@
-import { View, Text, SafeAreaView, ScrollView, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, SafeAreaView, ScrollView, FlatList, Image, StyleSheet, TouchableOpacity, Modal, Button } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import ImageSilder from '../../components/home.component/itemDetail.home.component/ImageSilder'
 import SelectDropDown from '../../components/home.component/itemDetail.home.component/SelectDropDown'
@@ -7,6 +7,8 @@ import FavoriteButton from '../../components/home.component/index.home.component
 import DescDrop from '../../components/home.component/itemDetail.home.component/DescDrop'
 import img from '../../constant/img'
 import ListAdditionalItem from '../../components/home.component/itemDetail.home.component/ListAdditionalItem'
+import BottomSheetChooseSize from '../../components/home.component/itemDetail.home.component/BottomSheetChooseSize'
+import CartButton from '../../components/home.component/itemDetail.home.component/CartButton'
 
 
 
@@ -21,8 +23,15 @@ const ItemDetail = () => {
   const [isChooseDescItemDetail, setIsChooseItemDetail] = useState(false); 
   const [isChooseDescShipingInfo, setIsChooseShipingInfo] = useState(false)
   const [isChooseDescSupport, setIsChooseSupport] = useState(false)
+  const [isShowSizeInCart, setIsShowSizeInCart] = useState(false); // show size when click cart
+  const [isAddItemIntoCart, setIsAddItemIntoCart] = useState(false); // choose size to add item to cart
 
-
+  // information add item to cart
+  const [informationAddItemToCart, setInformationAddItemToCart] = useState({
+    id : idItem,
+    size : '',
+    idSize : ''
+  });
   // fake data
   const listImg = [
     img.itemDetail, img.itemDetail, img.homeSmallBanner
@@ -35,6 +44,15 @@ const ItemDetail = () => {
     { label: 'Size xxl', value: 'xxl' },
   ];
   // End fake dât
+
+  // call api
+  useEffect(() => {
+    if(isAddItemIntoCart) {
+      console.log('call api add to cart', informationAddItemToCart)
+      setIsAddItemIntoCart(false)
+    }
+  }, [isAddItemIntoCart])
+  // End call api
 
 
   // set header title 
@@ -63,7 +81,8 @@ const ItemDetail = () => {
   })
   // End set header title
 
-  
+  // ref select size to cart
+  const bottomSheetRef = useRef(null);
  
   
   return (
@@ -123,12 +142,17 @@ const ItemDetail = () => {
         </ScrollView>
       </View>
       {/* Cart button */}
-      <View className='h-[112px] w-full flex justify-center items-center bg-[#fff]'>
-            <TouchableOpacity className='w-[343px] bg-[#DB3022] h-[48px] rounded-[25px] inline-flex justify-center items-center'>
-              <Text className='text-center text-[#FFFFFF] text-[20px] font-[500] uppercase'>Add to cart</Text>
-            </TouchableOpacity>
-          </View>
-          {/* End cart button */}
+      <CartButton set={setIsShowSizeInCart} isSet={isShowSizeInCart}/>
+      {/* End cart button */}
+
+      {/* select size */}
+      {
+        isShowSizeInCart 
+          ? <BottomSheetChooseSize bottomSheetRef={bottomSheetRef} isAddItemIntoCart={isAddItemIntoCart} setIsAddItemIntoCart={setIsAddItemIntoCart} informationAddItemToCart={informationAddItemToCart} setInformationAddItemToCart={setInformationAddItemToCart} setIsShowSizeInCart={setIsShowSizeInCart}/> 
+          : null 
+      }
+      {/* modal show infomation about size */}
+      
     </SafeAreaView>
     )
 }

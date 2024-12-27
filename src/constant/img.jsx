@@ -10,6 +10,7 @@ import showOneColumn from "../assets/img/showOneColumn.png"
 import twoArrow from "../assets/img/twoArrow.png"
 import itemDetailCategory from "../assets/img/itemDetailCategory.png"
 import searchButton from "../assets/img/searchButton.png"
+import sizeTable from "../assets/img/sizeTable.jpg"
 
 export default {
     homeBigBanner,
@@ -23,5 +24,6 @@ export default {
     showOneColumn,
     twoArrow,
     itemDetailCategory,
-    searchButton
+    searchButton,
+    sizeTable
 }
