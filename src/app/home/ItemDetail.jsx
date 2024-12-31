@@ -9,7 +9,8 @@ import img from '../../constant/img'
 import ListAdditionalItem from '../../components/home.component/itemDetail.home.component/ListAdditionalItem'
 import BottomSheetChooseSize from '../../components/home.component/itemDetail.home.component/BottomSheetChooseSize'
 import CartButton from '../../components/home.component/itemDetail.home.component/CartButton'
-
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 
 const ItemDetail = () => {
@@ -61,6 +62,7 @@ const ItemDetail = () => {
       navigation.setOptions({
         headerTitle: titleHeader,    
       });
+      console.log('call api')
     }
   }, [titleHeader]); 
 
@@ -84,7 +86,13 @@ const ItemDetail = () => {
   // ref select size to cart
   const bottomSheetRef = useRef(null);
  
-  
+  // navigate to review page
+  const handleNavigateToReviewPage = (idItem) => {
+    navigation.navigate('ItemReview', {idItem})
+  }
+  const handleClickDetailItem = (idItem, titleHeader) => {
+    navigation.navigate('ItemDetail', {idItem, titleHeader});
+  }
   return (
     <SafeAreaView className='flex-1'>
       <View className='flex-1'>
@@ -108,7 +116,7 @@ const ItemDetail = () => {
                 {/* End favorite button */}
               </View>
               {/* title */}
-              <View className='flex flex-row justify-between mb-[16px]'>
+              <View className='flex flex-row justify-between mb-[8px]'>
                 <View className='space-y-[4px] flex-1'>
                     <Text className='text-[#222222] text-[34px] font-[500] uppercase'>H&M</Text>
                     <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>Short black dress</Text>
@@ -118,6 +126,23 @@ const ItemDetail = () => {
                 </View>
               </View>
               {/* End title */}
+
+              {/* star review */}
+              <View className='mb-[16px]'>
+                <TouchableWithoutFeedback className='flex flex-row w-full space-x-[2px] items-center'
+                  onPress={() => handleNavigateToReviewPage(idItem)}
+                >
+                  <View className='w-[77px] flex-row'>
+                    <AntDesign name="star" size={15} color="#FFBA49"/>
+                    <AntDesign name="star" size={15} color="#FFBA49"/>
+                    <AntDesign name="star" size={15} color="#FFBA49"/>
+                    <AntDesign name="star" size={15} color="#FFBA49"/>
+                    <AntDesign name="star" size={15} color="#FFBA49"/>
+                  </View>
+                <Text className=''>(10)</Text>
+                </TouchableWithoutFeedback>
+              </View>
+              {/* End star review */}
 
               {/* desc */}
               <View className='mb-[20px] '>
@@ -136,7 +161,7 @@ const ItemDetail = () => {
             {/* End description */}
 
             {/* additional item */}
-            <ListAdditionalItem/>
+            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem}/>
             {/* End additional item */}
           </View>
         </ScrollView>

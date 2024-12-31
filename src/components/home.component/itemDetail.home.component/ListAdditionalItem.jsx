@@ -3,7 +3,7 @@ import React from 'react'
 import MixProductItem from '../../../dbFake/MixProductItem'
 import ItemHome from '../index.home.component/ItemHome'
 
-const ListAdditionalItem = () => {
+const ListAdditionalItem = ({handleClickDetailItem}) => {
   return (
     <View>
         {/* title */}
@@ -20,7 +20,7 @@ const ListAdditionalItem = () => {
                 data={MixProductItem}
                 keyExtractor={item => item.id}
                 renderItem={({item}) => {
-                    return <ItemHome item={item}/>
+                    return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem}/>
                 }}
                 horizontal
                 ItemSeparatorComponent={() => <View style={{margin:10}}></View>}

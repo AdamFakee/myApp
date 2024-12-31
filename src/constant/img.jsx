@@ -11,6 +11,10 @@ import twoArrow from "../assets/img/twoArrow.png"
 import itemDetailCategory from "../assets/img/itemDetailCategory.png"
 import searchButton from "../assets/img/searchButton.png"
 import sizeTable from "../assets/img/sizeTable.jpg"
+import itemReview from "../assets/img/itemReview.jpg"
+import avatar from '../assets/img/Avatar.png'
+import star from '../assets/img/Star.png'
+import reviewPhoto from '../assets/img/reviewPhoto.png'
 
 export default {
     homeBigBanner,
@@ -25,5 +29,9 @@ export default {
     twoArrow,
     itemDetailCategory,
     searchButton,
-    sizeTable
+    sizeTable,
+    itemReview,
+    avatar,
+    star,
+    reviewPhoto
 }
