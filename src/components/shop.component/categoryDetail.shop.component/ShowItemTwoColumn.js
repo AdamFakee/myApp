@@ -23,7 +23,10 @@ const ShowItemTwoColumn = ({handleClickDetailItem}) => {
         renderItem={({item}) => {
         return (
             <View className=' relative'>
-                <TouchableOpacity onPress={() => handleClickDetailItem(item.id, item.title)}>
+                <TouchableOpacity 
+                    activeOpacity={1}
+                    onPress={() => handleClickDetailItem(item.id, item.title)}
+                >
                     <View 
                         className={`bg-[#FFFFFF] rounded-[8px] overflow-hidden`}
                         style={{width: widthTwoColumn,}}

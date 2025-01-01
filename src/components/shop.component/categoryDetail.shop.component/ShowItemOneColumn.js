@@ -17,7 +17,9 @@ const ShowItemOneColumn = ({handleClickDetailItem}) => {
         renderItem={({item}) => {
             return (
                 <View className='h-[104px] w-full flex flex-row justify-start items-center bg-[#FFFFFF] rounded-[8px] relative' >
-                    <TouchableOpacity onPress={() => handleClickDetailItem(item.id, item.title)}
+                    <TouchableOpacity 
+                        activeOpacity={1}
+                        onPress={() => handleClickDetailItem(item.id, item.title)}
                         className='flex flex-row justify-center items-center'
                     >
                         <Image

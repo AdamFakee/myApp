@@ -11,6 +11,7 @@ import BottomSheetChooseSize from '../../components/home.component/itemDetail.ho
 import CartButton from '../../components/home.component/itemDetail.home.component/CartButton'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import MixProductItem from '../../dbFake/MixProductItem'
 
 
 const ItemDetail = () => {
@@ -21,12 +22,25 @@ const ItemDetail = () => {
   const [valueSelectColor, setValueSelectColor] = useState(null); // value of select dropdown
   const [isChooseColor, setIsChooseColor] = useState(false); // =true when user click specific select dropwn => change border color
   const [isChooseSize, setIsChooseSize] = useState(false); 
-  const [isChooseDescItemDetail, setIsChooseItemDetail] = useState(false); 
-  const [isChooseDescShipingInfo, setIsChooseShipingInfo] = useState(false)
-  const [isChooseDescSupport, setIsChooseSupport] = useState(false)
   const [isShowSizeInCart, setIsShowSizeInCart] = useState(false); // show size when click cart
   const [isAddItemIntoCart, setIsAddItemIntoCart] = useState(false); // choose size to add item to cart
-
+  // infoamtion item detail 
+  const [informationItemDetail, setInformationItemDetail] = useState({
+    id : 1,
+    imgs : [
+      img.itemDetail, img.itemDetail, img.homeSmallBanner
+    ],
+    shopName : 'h&m',
+    category : 'short black dress',
+    totalRating : 10,
+    price : 20,
+    desc : 'Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim.',
+    detail : 'Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim.',
+    support : 'contac zalo : tuan dep trai',
+    shippingInfo : 'unkown',
+    listAdditionalItem : MixProductItem,
+    productName : 'evening dress'
+  })
   // information add item to cart
   const [informationAddItemToCart, setInformationAddItemToCart] = useState({
     id : idItem,
@@ -47,12 +61,18 @@ const ItemDetail = () => {
   // End fake dât
 
   // call api
-  useEffect(() => {
-    if(isAddItemIntoCart) {
-      console.log('call api add to cart', informationAddItemToCart)
-      setIsAddItemIntoCart(false)
-    }
-  }, [isAddItemIntoCart])
+    // detail specific item
+    useEffect(() => {
+      console.log('call api : ', idItem)
+    }, [idItem])
+
+    // add item to cart
+    useEffect(() => {
+      if(isAddItemIntoCart) {
+        console.log('call api add to cart', informationAddItemToCart)
+        setIsAddItemIntoCart(false)
+      }
+    }, [isAddItemIntoCart])
   // End call api
 
 
@@ -62,7 +82,6 @@ const ItemDetail = () => {
       navigation.setOptions({
         headerTitle: titleHeader,    
       });
-      console.log('call api')
     }
   }, [titleHeader]); 
 
@@ -118,11 +137,11 @@ const ItemDetail = () => {
               {/* title */}
               <View className='flex flex-row justify-between mb-[8px]'>
                 <View className='space-y-[4px] flex-1'>
-                    <Text className='text-[#222222] text-[34px] font-[500] uppercase'>H&M</Text>
-                    <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>Short black dress</Text>
+                    <Text className='text-[#222222] text-[34px] font-[500] uppercase'>{informationItemDetail.shopName}</Text>
+                    <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>{informationItemDetail.category}</Text>
                 </View>
                 <View>
-                  <Text  className='text-[#222222] text-[34px] font-[500] uppercase'>$19.99</Text>
+                  <Text  className='text-[#222222] text-[34px] font-[500] uppercase'>${informationItemDetail.price}</Text>
                 </View>
               </View>
               {/* End title */}
@@ -139,29 +158,28 @@ const ItemDetail = () => {
                     <AntDesign name="star" size={15} color="#FFBA49"/>
                     <AntDesign name="star" size={15} color="#FFBA49"/>
                   </View>
-                <Text className=''>(10)</Text>
+                <Text className=''>({informationItemDetail.totalRating})</Text>
                 </TouchableWithoutFeedback>
               </View>
               {/* End star review */}
 
               {/* desc */}
               <View className='mb-[20px] '>
-                <Text className='text-[#222222] text-[14px] font-[400]'>Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim.</Text>
+                <Text className='text-[#222222] text-[14px] font-[400]'>{informationItemDetail.desc}</Text>
               </View>
               {/* End desc */}
             </View>
 
             {/* desc drop */}
             <View className='mb-[24px]'>
-              <DescDrop isChoose={isChooseDescItemDetail} setIsChoose={setIsChooseItemDetail} title='Detail' descInfomation="Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim."/>
-              <DescDrop isChoose={isChooseDescShipingInfo} setIsChoose={setIsChooseShipingInfo} title='Support' descInfomation="Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim."/>
-              <DescDrop isChoose={isChooseDescSupport} setIsChoose={setIsChooseSupport} title='Shipping info' descInfomation="Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim."/>
+              <DescDrop title='Detail' descInfomation={informationItemDetail.detail}/>
+              <DescDrop title='Support' descInfomation={informationItemDetail.support}/>
+              <DescDrop title='Shipping info' descInfomation={informationItemDetail.shippingInfo}/>
             </View>
             {/* End desc drop */}
             {/* End description */}
-
             {/* additional item */}
-            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem}/>
+            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem} data={MixProductItem}/>
             {/* End additional item */}
           </View>
         </ScrollView>

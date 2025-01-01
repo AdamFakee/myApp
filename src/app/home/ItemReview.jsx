@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback, Image, StyleSheet } from 'react-native'
+import { View, Text } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import StarReview from '../../components/home.component/itemReview/StarReview'
@@ -7,7 +7,7 @@ import CommentReview from '../../components/home.component/itemReview/CommentRev
 import { SafeAreaView } from 'react-native-safe-area-context'
 import WriteReviewButton from '../../components/home.component/itemReview/WriteReviewButton'
 import WriteReviewBottomSheet from '../../components/home.component/itemReview/WriteReviewBottomSheet'
-import Feather from '@expo/vector-icons/Feather';
+import TotalInfomationRating from '../../components/home.component/itemReview/TotalInfomationRating'
 
 const ItemReview = () => {
 
@@ -119,27 +119,11 @@ const ItemReview = () => {
 
       {/* comment review */}
       <View className='mt-[33px]' style={{flex : 4}}>
-        <View className='flex-row w-full justify-between mb-[30px]'>
-          {
-            isWatchWithPhoto 
-              ? <Text className='text-[#222] text-[22px] font-[600]'>{dataCommentReview_with_photo.length} reivews</Text>
-              : <Text className='text-[#222] text-[22px] font-[600]'>{dataCommentReview.length} reivews</Text>
-          }
-          <View className='flex-row space-x-[8px]'>
-            {
-              isWatchWithPhoto 
-                ? <TouchableWithoutFeedback onPress={() => setIsWatchWithPhoto(!isWatchWithPhoto)}>
-                    <View className='border-[#222222] bg-[#222222] border-[2px] h-[20px] w-[20px] rounded-[4px]'>
-                      <Feather name="check" size={17} color="#FFFFFF" />
-                    </View>
-                  </TouchableWithoutFeedback>
-                : <TouchableWithoutFeedback onPress={() => setIsWatchWithPhoto(!isWatchWithPhoto)}>
-                    <View className='border-[#9B9B9B] border-[2px] h-[20px] w-[20px] rounded-[4px]'></View>
-                  </TouchableWithoutFeedback>
-            }
-            <Text>With photo</Text>
-          </View>
-        </View>
+        {
+          isWatchWithPhoto 
+            ? <TotalInfomationRating data={dataCommentReview_with_photo} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
+            : <TotalInfomationRating data={dataCommentReview} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
+        }
 
         {/* infomation about review */}
         {

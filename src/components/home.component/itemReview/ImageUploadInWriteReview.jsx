@@ -1,6 +1,5 @@
-import { View, Text, Image } from 'react-native'
-import React, { useCallback } from 'react'
-import { BottomSheetFlashList } from '@gorhom/bottom-sheet'
+import { View, Image } from 'react-native'
+import React from 'react'
 import { FlatList } from 'react-native-gesture-handler'
 
  const Render = ({item}) => {
@@ -23,6 +22,7 @@ const ImageUploadInWriteReview = ({formRatingReview, setFormRatingReview}) => {
                 return <Render item = {item}/>
             }}
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
         />
     )
 }

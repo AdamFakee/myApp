@@ -18,6 +18,7 @@ const CartButton = ({set, isSet, informationAddItemToCart, handleClosePress}) =>
   return (
     <View className={`h-[112px] w-full flex justify-center items-center`} style={styles._bgColor}>
       <TouchableOpacity 
+        activeOpacity={1}
         className='w-[343px] bg-[#DB3022] h-[48px] rounded-[25px] inline-flex justify-center items-center'
         onPress={() => validateInfomation()}
       >

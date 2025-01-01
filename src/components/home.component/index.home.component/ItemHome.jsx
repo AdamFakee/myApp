@@ -41,7 +41,7 @@ const ItemHome = ({item, handleClickDetailItem}) => {
         }
 
         {/* infor item */}
-        <TouchableOpacity onPress={() => handleClickDetailItem(item.id, item.title)}>
+        <TouchableOpacity activeOpacity={1} onPress={() => handleClickDetailItem(item.id, item.title)}>
           <View className='w-full'>
               <Image
                   source={item.image}

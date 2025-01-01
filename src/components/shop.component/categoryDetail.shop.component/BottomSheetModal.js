@@ -44,7 +44,9 @@ const CustomBottomSheetModal = ({filterSorted, bottomSheetModalRef, filterSorted
 								key={item.id}
 								className={`h-[48px] px-[16px] w-full ${isChoose ? 'bg-[#DB3022]' : ''}`}
 							>
-								<TouchableOpacity className='h-full flex flex-row items-center' onPress={() => handleChooseSortedType(item)}>
+								<TouchableOpacity 
+									className='h-full flex flex-row items-center' 
+									onPress={() => handleChooseSortedType(item)}>
 									<Text className={` text-[16px] font-[400] items-center ${isChoose ? 'text-[#f9f9f9]' : 'text-[#222222]'} `}>{item.title}</Text>
 								</TouchableOpacity>
 							</View>
