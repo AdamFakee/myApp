@@ -14,6 +14,11 @@ const Home = () => {
   }
   return (
     <View className='flex-1'>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="space-y-[40px]">
           {/* banner */}
