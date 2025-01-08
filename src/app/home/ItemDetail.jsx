@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, FlatList, Image, StyleSheet, TouchableOpacity, Modal, Button } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, FlatList, Image, StyleSheet, TouchableOpacity, Modal, Button, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import ImageSilder from '../../components/home.component/itemDetail.home.component/ImageSilder'
@@ -12,6 +12,7 @@ import CartButton from '../../components/home.component/itemDetail.home.componen
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import MixProductItem from '../../dbFake/MixProductItem'
+import { homeLibNettwork } from '../../nettwork/lib/home.lib'
 
 
 const ItemDetail = () => {
@@ -24,6 +25,9 @@ const ItemDetail = () => {
   const [isChooseSize, setIsChooseSize] = useState(false); 
   const [isShowSizeInCart, setIsShowSizeInCart] = useState(false); // show size when click cart
   const [isAddItemIntoCart, setIsAddItemIntoCart] = useState(false); // choose size to add item to cart
+  const [detailItem, setDetailItem] = useState([]);
+  const [additionalProducts, setAdditionalProducts] = useState([]);
+  // const [listImages, setListImages] = useState([]); 
   // infoamtion item detail 
   const [informationItemDetail, setInformationItemDetail] = useState({
     id : 1,
@@ -48,9 +52,6 @@ const ItemDetail = () => {
     idSize : ''
   });
   // fake data
-  const listImg = [
-    img.itemDetail, img.itemDetail, img.homeSmallBanner
-  ]
   const dropDownList = [
     { label: 'Size s', value: 's'},
     { label: 'Size xs', value: 'xs' },
@@ -58,12 +59,25 @@ const ItemDetail = () => {
     { label: 'Size l', value: 'l' },
     { label: 'Size xxl', value: 'xxl' },
   ];
-  // End fake dât
+  // End fake data
 
   // call api
     // detail specific item
     useEffect(() => {
-      console.log('call api : ', idItem)
+      homeLibNettwork.getDetailProduct(idItem)
+        .then(function (response) {
+          const {data, code} = response.data;
+          if(code == "200") {
+            setAdditionalProducts(data.additionalProducts);
+            setDetailItem(data.item);
+            return;
+          } else {
+            Alert.alert('not exist item')
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
     }, [idItem])
 
     // add item to cart
@@ -75,7 +89,8 @@ const ItemDetail = () => {
     }, [isAddItemIntoCart])
   // End call api
 
-
+  const listImages = detailItem.images || [];
+  const listImageComingSoon = [img.imageComingSoon, img.imageComingSoon, img.imageComingSoon]; // when listImage empty
   // set header title 
   useEffect(() => {
     if (titleHeader) {
@@ -118,8 +133,11 @@ const ItemDetail = () => {
         <ScrollView>
           <View>
             {/* image slider */}
-            <ImageSilder data={listImg}/>
-
+            {
+              listImages.length > 0 
+                ? <ImageSilder data={listImages}></ImageSilder>
+                : <ImageSilder data={listImageComingSoon} isStaticImages={true}></ImageSilder>
+            }
             {/* description */}
             <View className='px-[16px] mt-[16px]'>
               <View className='flex flex-row justify-between items-center mb-[24px]'>
@@ -137,11 +155,11 @@ const ItemDetail = () => {
               {/* title */}
               <View className='flex flex-row justify-between mb-[8px]'>
                 <View className='space-y-[4px] flex-1'>
-                    <Text className='text-[#222222] text-[34px] font-[500] uppercase'>{informationItemDetail.shopName}</Text>
+                    <Text className='text-[#222222] text-[34px] font-[500] uppercase'>{detailItem.categoryName}</Text>
                     <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>{informationItemDetail.category}</Text>
                 </View>
                 <View>
-                  <Text  className='text-[#222222] text-[34px] font-[500] uppercase'>${informationItemDetail.price}</Text>
+                  <Text  className='text-[#222222] text-[34px] font-[500] uppercase'>${detailItem.price}</Text>
                 </View>
               </View>
               {/* End title */}
@@ -158,28 +176,28 @@ const ItemDetail = () => {
                     <AntDesign name="star" size={15} color="#FFBA49"/>
                     <AntDesign name="star" size={15} color="#FFBA49"/>
                   </View>
-                <Text className=''>({informationItemDetail.totalRating})</Text>
+                <Text className=''>({detailItem.starCount})</Text>
                 </TouchableWithoutFeedback>
               </View>
               {/* End star review */}
 
               {/* desc */}
               <View className='mb-[20px] '>
-                <Text className='text-[#222222] text-[14px] font-[400]'>{informationItemDetail.desc}</Text>
+                <Text className='text-[#222222] text-[14px] font-[400]'>{detailItem.detail}</Text>
               </View>
               {/* End desc */}
             </View>
 
             {/* desc drop */}
             <View className='mb-[24px]'>
-              <DescDrop title='Detail' descInfomation={informationItemDetail.detail}/>
-              <DescDrop title='Support' descInfomation={informationItemDetail.support}/>
-              <DescDrop title='Shipping info' descInfomation={informationItemDetail.shippingInfo}/>
+              <DescDrop title='Detail' descInfomation={detailItem.detail}/>
+              <DescDrop title='Support' descInfomation='contac zalo : tuan dep trai'/>
+              <DescDrop title='Shipping info' descInfomation='unkown'/>
             </View>
             {/* End desc drop */}
             {/* End description */}
             {/* additional item */}
-            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem} data={MixProductItem}/>
+            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem} data={additionalProducts}/>
             {/* End additional item */}
           </View>
         </ScrollView>

@@ -1,9 +1,10 @@
 import axios from "axios";
+import domain from "../constant/domain";
 
 
 
 export const axiosClient = axios.create({
-    baseURL: 'http://192.168.1.46:3000',
+    baseURL: domain,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

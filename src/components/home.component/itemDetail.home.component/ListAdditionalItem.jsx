@@ -17,7 +17,7 @@ const ListAdditionalItem = ({handleClickDetailItem, data}) => {
                 {/* item */}
                 <FlatList 
                 data={data}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.productId}
                 renderItem={({item}) => {
                     return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem}/>
                 }}

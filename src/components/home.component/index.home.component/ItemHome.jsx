@@ -20,15 +20,15 @@ const MarkNewItem = () => {
 const MarkContainOldPrice = ({oldPrice, newPrice}) => {
   return (
     <View className='flex flex-row gap-[7px] w-full'>
-      <Text className='text-[#9B9B9B] font-[600] text-[16px] line-through'>{oldPrice}</Text>
-      <Text className='text-[#DB3022] font-[600] text-[16px]'>{newPrice}</Text>
+      <Text className='text-[#9B9B9B] font-[600] text-[16px] line-through'>{oldPrice}$</Text>
+      <Text className='text-[#DB3022] font-[600] text-[16px]'>{newPrice}$</Text>
     </View> 
   )
 }
 const MarkNotContainOldPrice = ({oldPrice}) => {
   return (
     <View className='flex flex-row gap-[7px] w-full'>
-      <Text className='text-[#DB3022] font-[600] text-[16px]'>{oldPrice}</Text>
+      <Text className='text-[#DB3022] font-[600] text-[16px]'>{oldPrice}$</Text>
     </View> 
   )
 }
@@ -37,24 +37,25 @@ const ItemHome = ({item, handleClickDetailItem}) => {
     <View className='w-[150px] space-y-[5px] relative'>
         {/* mark title */}
         {
-          item.flag==="newItem" ? <MarkNewItem/> : item.discount > 0 ? <MarkDiscount discount={item.discount}/> : null
+          item.discount < 10 ? <MarkNewItem/> : item.discount > 0 ? <MarkDiscount discount={item.discount}/> : null
         }
 
         {/* infor item */}
-        <TouchableOpacity activeOpacity={1} onPress={() => handleClickDetailItem(item.id, item.title)}>
+        <TouchableOpacity activeOpacity={1} onPress={() => handleClickDetailItem(item.productId, item.productName)}>
           <View className='w-full'>
               <Image
-                  source={item.image}
+                  source={{ uri: item.imageMain }}
                   className='object-cover w-full'
+                  style={{aspectRatio : 148/184}}
               />
               {/* category */}
-              <Text className='text-[#9B9B9B] font-[400] text-[16px]'>{item.category}</Text>
+              <Text className='text-[#9B9B9B] font-[400] text-[16px]'>{item.categoryName}</Text>
               {/* product name */}
-              <Text className='text-[#222222] font-[600] text-[20px]'>{item.title}</Text>
+              <Text className='text-[#222222] font-[600] text-[20px]'>{item.productName}</Text>
               {/* price */}
               {
-                item.discount > 0 ? <MarkContainOldPrice oldPrice={item.oldPrice} newPrice={item.newPrice}/> : <MarkNotContainOldPrice oldPrice={item.oldPrice}/>
-              }                
+                item.discount > 0 ? <MarkContainOldPrice oldPrice={item.price} newPrice={item.newPrice}/> : <MarkNotContainOldPrice oldPrice={item.price}/>
+              }              
           </View>
         </TouchableOpacity>
 

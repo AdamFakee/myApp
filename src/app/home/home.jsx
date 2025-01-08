@@ -1,17 +1,35 @@
 import { View, Text, Button ,Image, StatusBar, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native'
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import img from '../../constant/img'
-import productItem from '../../dbFake/productItem'
-import NewProductItem from '../../dbFake/NewProductItem'
 import ListItemHome from '../../components/home.component/index.home.component/ListItemHome'
+import { homeLibNettwork } from '../../nettwork/lib/home.lib'
 
 const Home = () => {
   const navigation = useNavigation();
   const handleClickDetailItem = (idItem, titleHeader) => {
     navigation.navigate('ItemDetail', {idItem, titleHeader});
   }
+  const [discountProducts, setDiscountProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
+
+  // call api
+  useEffect(() => {
+    homeLibNettwork.getProduct()
+      .then(function (response) {
+        const {data, code} = response.data;
+        if(code == "200") {
+          setDiscountProducts(data.discountProducts);
+          setNewProducts(data.newProducts);
+          return;
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }, [])
+  // end call api
+
   return (
     <View className='flex-1'>
       <StatusBar
@@ -19,7 +37,7 @@ const Home = () => {
         backgroundColor="transparent"
         barStyle="light-content"
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex:1}} showsVerticalScrollIndicator={false}>
         <View className="space-y-[40px]">
           {/* banner */}
           <View className='w-full relative '>
@@ -40,7 +58,7 @@ const Home = () => {
                 textLink:'view all'
               }
             }
-            productItem={productItem}
+            productItem={discountProducts}
             handleClickDetailItem={handleClickDetailItem}
           />
           {/* End sale product item */}
@@ -54,7 +72,7 @@ const Home = () => {
                 textLink:'view all'
               }
             }
-            productItem={NewProductItem}
+            productItem={newProducts}
             handleClickDetailItem={handleClickDetailItem}
           />
           {/* End new product item */}
@@ -64,10 +82,5 @@ const Home = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  favoriteButton : {
-    boxShadow: '0px 4px 4px 0px #00000014',
-  }
-});
 
 export default Home

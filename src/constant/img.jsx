@@ -15,7 +15,8 @@ import itemReview from "../assets/img/itemReview.jpg"
 import avatar from '../assets/img/Avatar.png'
 import star from '../assets/img/Star.png'
 import reviewPhoto from '../assets/img/reviewPhoto.png'
-
+import checkoutSuccess from '../assets/img/checkoutSuccess.png'
+import imageComingSoon from '../assets/img/ImageComingSoon.png';
 export default {
     homeBigBanner,
     homeProductItem,
@@ -33,5 +34,7 @@ export default {
     itemReview,
     avatar,
     star,
-    reviewPhoto
+    reviewPhoto,
+    checkoutSuccess,
+    imageComingSoon
 }

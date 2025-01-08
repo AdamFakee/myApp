@@ -30,7 +30,7 @@ const ListItemHome = ({
               {/* item */}
               <FlatList 
               data={productItem}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.productId}
               renderItem={({item}) => {
                 return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem}/>
               }}
