@@ -9,11 +9,11 @@ const FormTextFeild = ({
 
   return (
 
-    <View className='bg-[#fff] shadow-[0px 1px 8px 0px #0000000D] h-[64px] rounded-[4px] py-[16px] px-[20px] w-full mb-[8px] flex flex-row justify-between items-center '>
-        <View className='flex-1'>
-            <Text className=' text-[#9B9B9B] text-[11px] capitalize bg-slate-600'>{title}</Text>
+    <View className='bg-[#fff] shadow-[0px 1px 8px 0px #0000000D] h-[64px] rounded-[4px] py-[8px] px-[20px] w-full mb-[8px] flex flex-row justify-between items-center '>
+        <View className='flex-1 h-full'>
+            <Text className=' text-[#9B9B9B] text-[11px] capitalize'>{title}</Text>
             <TextInput 
-              className=' text-[#2D2D2D] text-[14px] leading-[20px] bg-yellow-300 h-auto'
+              className=' text-[#2D2D2D] text-[14px] h-auto'
               value={value}
               onChangeText={handleChangeText}
               placeholder={placeholder}

@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { asyncStorageService } from "../service/asyncStorage.service";
 
 
 const GlobalContext = createContext();
@@ -9,20 +10,24 @@ const GlobalProvider = ({ children }) => {
   // const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState({});
+  const [isLogged, setIsLogged] = useState(false);
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const token = await asyncStorageService.getObjectData('token');
+        if(token) {
+          setIsLogged(true);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy token:', error.message);
+      }
+      setLoading(false);
+    };
 
-  // useEffect(() => {
-  //   if(!token) {
-  //     navigation.reset({
-  //       index: 0,
-  //       routes: [
-  //         {
-  //           name: 'login',
-  //         },
-  //       ],
-  //     });
-  //   }
-  // })
+    fetchToken();
+  }, []);
+
 
   return (
     <GlobalContext.Provider
@@ -31,7 +36,10 @@ const GlobalProvider = ({ children }) => {
         setUser,
         loading,
         setToken,
-        token
+        token,
+        isLogged,
+        setIsLogged,
+        setLoading
       }}
     >
       {children}
