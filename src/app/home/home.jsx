@@ -1,9 +1,11 @@
-import { View, Text, Button ,Image, StatusBar, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native'
+import { View, Text, Button ,Image, StatusBar, TouchableOpacity, StyleSheet, FlatList, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import img from '../../constant/img'
 import ListItemHome from '../../components/home.component/index.home.component/ListItemHome'
 import { homeLibNettwork } from '../../nettwork/lib/home.lib'
+import { favoriteLibNettwork } from '../../nettwork/lib/favorite.lib'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const Home = () => {
   const navigation = useNavigation();
@@ -12,6 +14,27 @@ const Home = () => {
   }
   const [discountProducts, setDiscountProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
+  const {token, isLogged, setIsLogged} = useGlobalContext();
+
+
+  // call api add to favorite
+  const handleAddToFavorite = async (data) => {
+    try {
+      const accessToken = token.accessToken;
+      if(!accessToken || !isLogged) {
+          setIsLogged(false); // no token => set logout
+          return;
+      }
+      const headers = { 'Authorization': `Bearer ${accessToken}` };
+      const response = await favoriteLibNettwork.addToFavorite(data, headers);
+      const code = response.data.code;
+      if(code != 200) {
+        Alert.alert('add have some err');
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   // call api
   useEffect(() => {
@@ -60,6 +83,7 @@ const Home = () => {
             }
             productItem={discountProducts}
             handleClickDetailItem={handleClickDetailItem}
+            handleAddToFavorite={handleAddToFavorite}
           />
           {/* End sale product item */}
 
@@ -74,6 +98,7 @@ const Home = () => {
             }
             productItem={newProducts}
             handleClickDetailItem={handleClickDetailItem}
+            handleAddToFavorite={handleAddToFavorite}
           />
           {/* End new product item */}
         </View>

@@ -13,6 +13,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import MixProductItem from '../../dbFake/MixProductItem'
 import { homeLibNettwork } from '../../nettwork/lib/home.lib'
+import { useGlobalContext } from '../../context/GlobalProvider'
+import { favoriteLibNettwork } from '../../nettwork/lib/favorite.lib'
 
 
 const ItemDetail = () => {
@@ -27,29 +29,11 @@ const ItemDetail = () => {
   const [isAddItemIntoCart, setIsAddItemIntoCart] = useState(false); // choose size to add item to cart
   const [detailItem, setDetailItem] = useState([]);
   const [additionalProducts, setAdditionalProducts] = useState([]);
-  // const [listImages, setListImages] = useState([]); 
-  // infoamtion item detail 
-  const [informationItemDetail, setInformationItemDetail] = useState({
-    id : 1,
-    imgs : [
-      img.itemDetail, img.itemDetail, img.homeSmallBanner
-    ],
-    shopName : 'h&m',
-    category : 'short black dress',
-    totalRating : 10,
-    price : 20,
-    desc : 'Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim.',
-    detail : 'Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim.',
-    support : 'contac zalo : tuan dep trai',
-    shippingInfo : 'unkown',
-    listAdditionalItem : MixProductItem,
-    productName : 'evening dress'
-  })
-  // information add item to cart
+  const {token, setIsLogged, isLogged} = useGlobalContext();
+  // data add to bag
   const [informationAddItemToCart, setInformationAddItemToCart] = useState({
-    id : idItem,
-    size : '',
-    idSize : ''
+    "productId" : idItem,
+    "sizeName" : "l"
   });
   // fake data
   const dropDownList = [
@@ -80,10 +64,50 @@ const ItemDetail = () => {
         })
     }, [idItem])
 
+    // add item to favorite
+    const handleAddToFavorite = async (data) => {
+      try {
+        const accessToken = token.accessToken;
+        if(!accessToken || !isLogged) {
+            setIsLogged(false); // no token => set logout
+            return;
+        }
+        const headers = { 'Authorization': `Bearer ${accessToken}` };
+        const response = await favoriteLibNettwork.addToFavorite(data, headers);
+        const code = response.data.code;
+        if(code != 200) {
+          Alert.alert('add have some err');
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    // End add item to favorite
+    
     // add item to cart
     useEffect(() => {
       if(isAddItemIntoCart) {
-        console.log('call api add to cart', informationAddItemToCart)
+        const accessToken = token.accessToken;
+        if(!accessToken || !isLogged) {
+            setIsLogged(false);
+            Alert.alert('you are logout')
+            return;
+        }
+        const headers = { 'Authorization': `Bearer ${accessToken}` };
+        homeLibNettwork.addItemToBag(informationAddItemToCart, headers)
+          .then(function (response) {
+            const {data, code} = response.data;
+            console.log(data)
+            if(code == "200") {
+              
+              return;
+            } else {
+              Alert.alert('not exist item')
+            }
+          })
+          .catch(function (error) {
+            console.log(error.message);
+          })
         setIsAddItemIntoCart(false)
       }
     }, [isAddItemIntoCart])
@@ -149,14 +173,14 @@ const ItemDetail = () => {
                 <SelectDropDown data={dropDownList}  value={valueSelectColor} setValue={setValueSelectColor} isChoose={isChooseSize} title='Color' isChooseSize={isChooseColor} setIsChooseSize={setIsChooseSize} isChooseColor={isChooseColor} setIsChooseColor={setIsChooseColor}/>
                 
                 {/* favorite button */}
-                <FavoriteButton otherStyle='removePosition'/>
+                <FavoriteButton otherStyle='removePosition' handleAddToFavorite={handleAddToFavorite} data={{"productId" : detailItem.productId}}/>
                 {/* End favorite button */}
               </View>
               {/* title */}
               <View className='flex flex-row justify-between mb-[8px]'>
                 <View className='space-y-[4px] flex-1'>
                     <Text className='text-[#222222] text-[34px] font-[500] uppercase'>{detailItem.categoryName}</Text>
-                    <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>{informationItemDetail.category}</Text>
+                    <Text className='text-[#9B9B9B] text-[16px] font-[400] capitalize'>{detailItem.productName}</Text>
                 </View>
                 <View>
                   <Text  className='text-[#222222] text-[34px] font-[500] uppercase'>${detailItem.price}</Text>
@@ -197,7 +221,7 @@ const ItemDetail = () => {
             {/* End desc drop */}
             {/* End description */}
             {/* additional item */}
-            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem} data={additionalProducts}/>
+            <ListAdditionalItem handleClickDetailItem={handleClickDetailItem} data={additionalProducts} handleAddToFavorite={handleAddToFavorite}/>
             {/* End additional item */}
           </View>
         </ScrollView>

@@ -1,13 +1,18 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet} from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Entypo from '@expo/vector-icons/Entypo';
-const Render = ({item, dispatchOrder}) => {
+const Render = ({item, dispatchOrder, handelCallApiDeleteItem, handleAddToFavorite}) => {
     const [isThreeDot, setIsThreeDot] = useState(false);
+    const data = {
+        productId : item.productId,
+        sizeName : item.sizeName
+    }
+
     return (
         <View className='flex-row h-[105px]' style={styles._container}>
             {/* img */}
             <Image 
-                source={item.image}
+                source={{uri : item.imageMain}}
                 style={styles._image}
             />
             {/* desc */}
@@ -20,11 +25,11 @@ const Render = ({item, dispatchOrder}) => {
                         <View className='flex-row gap-[14px]'>
                             <View className='flex-row space-x-[3px]'>
                                 <Text className='text-[#9B9B9B] text-[13px] font-[400]'>Color:</Text>
-                                <Text className='text-[#222] text-[13px] font-[500] ml-[5px]'>{item.colorName}</Text>
+                                <Text className='text-[#222] text-[13px] font-[500] ml-[5px]'>red</Text>
                             </View>
                             <View className='flex-row space-x-[3px]'>
                                 <Text className='text-[#9B9B9B] text-[13px] font-[400]'>Size:</Text>
-                                <Text className='text-[#222] text-[13px] font-[500] ml-[5px]'>{item.size}</Text>
+                                <Text className='text-[#222] text-[13px] font-[500] ml-[5px]'>{item.sizeName}</Text>
                             </View>
                         </View>
                     </View>
@@ -43,7 +48,7 @@ const Render = ({item, dispatchOrder}) => {
                             onPress={() => dispatchOrder({
                                 type : 'minus',
                                 value : {
-                                    id : item.id,
+                                    productId : item.productId,
                                     amount : item.amount - 1
                                 }
                             })}
@@ -58,7 +63,7 @@ const Render = ({item, dispatchOrder}) => {
                             onPress={() => dispatchOrder({
                                 type : 'plus',
                                 value : {
-                                    id : item.id,
+                                    productId : item.productId,
                                     amount : item.amount + 1
                                 }
                             })}
@@ -73,11 +78,18 @@ const Render = ({item, dispatchOrder}) => {
                     isThreeDot 
                         ? 
                         <View style={styles._popUp}>
-                            <TouchableOpacity style>
-
+                            <TouchableOpacity 
+                                activeOpacity={0.7}
+                                onPress={() => handleAddToFavorite(data)}
+                            >
+                                <Text className='text-[#222222] text-[12px] font-[500] border-b-[1px] border-[#9b9b9b] px-[30px] py-[15px] text-center'>Add to favorites</Text>
                             </TouchableOpacity>
-                            <Text className='text-[#222222] text-[12px] font-[500] border-b-[1px] border-[#9b9b9b] px-[30px] py-[15px] text-center'>Add to favorites</Text>
-                            <Text className='text-[#222222] text-[12px] font-[500] px-[30px] py-[15px] text-center'>Delete from the list</Text>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => handelCallApiDeleteItem(data)}
+                            >
+                                <Text className='text-[#222222] text-[12px] font-[500] px-[30px] py-[15px] text-center'>Delete from the list</Text>
+                            </TouchableOpacity>
                         </View>
                         : null
                 }
@@ -86,12 +98,12 @@ const Render = ({item, dispatchOrder}) => {
     )
 }
 
-const ListItemInBag = ({data, dispatchOrder}) => {
+const ListItemInBag = ({data, dispatchOrder, handelCallApiDeleteItem, handleAddToFavorite}) => {
     return (
         <FlatList
             data={data}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => <Render item={item} dispatchOrder={dispatchOrder}/>}
+            keyExtractor={item => item.productId}
+            renderItem={({item}) => <Render item={item} dispatchOrder={dispatchOrder} handelCallApiDeleteItem={handelCallApiDeleteItem} handleAddToFavorite={handleAddToFavorite}/>}
             contentContainerStyle={{
                 gap : 24,             
                 position : 'relative', 

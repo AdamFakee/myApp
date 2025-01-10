@@ -32,7 +32,10 @@ const MarkNotContainOldPrice = ({oldPrice}) => {
     </View> 
   )
 }
-const ItemHome = ({item, handleClickDetailItem}) => {
+const ItemHome = ({item, handleClickDetailItem, handleAddToFavorite}) => {
+  const data = {
+    "productId" : item.productId
+  }
   return (
     <View className='w-[150px] space-y-[5px] relative'>
         {/* mark title */}
@@ -60,7 +63,7 @@ const ItemHome = ({item, handleClickDetailItem}) => {
         </TouchableOpacity>
 
         {/* favoriteButton */}
-        <FavoriteButton/>
+        <FavoriteButton data={data} handleAddToFavorite={handleAddToFavorite}/>
     </View>
   )
 }

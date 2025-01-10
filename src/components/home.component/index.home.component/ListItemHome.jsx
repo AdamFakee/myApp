@@ -7,7 +7,8 @@ const ListItemHome = ({
     title:'', type:'', textLink:''
   },
   productItem,
-  handleClickDetailItem
+  handleClickDetailItem,
+  handleAddToFavorite
 }) => {
   return (
     <View className='p-[16px]'>
@@ -32,7 +33,7 @@ const ListItemHome = ({
               data={productItem}
               keyExtractor={item => item.productId}
               renderItem={({item}) => {
-                return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem}/>
+                return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem} handleAddToFavorite={handleAddToFavorite}/>
               }}
               horizontal
               ItemSeparatorComponent={() => <View style={{margin:10}}></View>}

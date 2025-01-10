@@ -2,7 +2,8 @@ import { View, Text, FlatList } from 'react-native'
 import React from 'react'
 import ItemHome from '../index.home.component/ItemHome'
 
-const ListAdditionalItem = ({handleClickDetailItem, data}) => {
+const ListAdditionalItem = ({handleClickDetailItem, data, handleAddToFavorite}) => {
+    
   return (
     <View>
         {/* title */}
@@ -19,7 +20,7 @@ const ListAdditionalItem = ({handleClickDetailItem, data}) => {
                 data={data}
                 keyExtractor={item => item.productId}
                 renderItem={({item}) => {
-                    return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem}/>
+                    return <ItemHome item={item} handleClickDetailItem={handleClickDetailItem} handleAddToFavorite={handleAddToFavorite}/>
                 }}
                 horizontal
                 ItemSeparatorComponent={() => <View style={{margin:10}}></View>}

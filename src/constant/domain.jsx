@@ -1,2 +1,2 @@
-const domain = "http://192.168.176.3:3000";
+const domain = "http://192.168.1.187:3000";
 export default domain;
