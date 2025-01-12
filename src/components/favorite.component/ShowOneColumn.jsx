@@ -42,8 +42,8 @@ const starCount = [
     ]
   ];
 
-const Render = ({item, handleClickDetailItem}) => {
-    const starReviewElement = starCount[Math.floor(item.averageStar - 1)]
+const Render = ({item, handleClickDetailItem, deleteItemFavorite, setIsShowSizeInCart, setInformationAddItemToCart}) => {
+    const starReviewElement = starCount[Math.floor(item.starAverage - 1)]
     return (
         <TouchableOpacity
             activeOpacity={0.7}
@@ -51,12 +51,12 @@ const Render = ({item, handleClickDetailItem}) => {
             style={{
                 marginBottom : item.soldOut ? 18 : 0
             }}
-            onPress={() => handleClickDetailItem(item.id, item.productName)}
+            onPress={() => handleClickDetailItem(item.productId, item.productName)}
         >
             <View className='flex-row'>
                 {/* img */}
                 <Image 
-                    source={item.image}
+                    source={{ uri : item.imageMain}}
                     className='h-[104px] w-[104px]'
                 />
                 {/* desc */}
@@ -65,15 +65,6 @@ const Render = ({item, handleClickDetailItem}) => {
                     <Text className='text-[#9B9B9B] text-[14px] font-[400]'>{item.shopName}</Text>  
                     {/* product name  */}
                     <Text className='text-[#222] text-[20px] font-[500]'>{item.productName}</Text>    
-                    {/* color size */}
-                    <View style={styles._colorSize}>
-                        <Text className='text-[#9B9B9B] text-[14px] font-[400]'>
-                            Color: <Text className='text-[#222] text-[14px] font-[500] ml-[5px]'>{item.colorName}</Text>
-                        </Text>
-                        <Text className='text-[#9B9B9B] text-[14px] font-[400]'>
-                            Size: <Text className='text-[#222] text-[14px] font-[500] ml-[5px]'>{item.size}</Text>
-                        </Text>
-                    </View> 
                     {/* price star */}
                     <View className='flex-row space-x-[58px]'>
                         <Text className='text-[#222] text-[16px] font-[500]'>{item.newPrice}$</Text>
@@ -81,34 +72,42 @@ const Render = ({item, handleClickDetailItem}) => {
                             <View className='flex-row justify-center items-center'>
                                 {starReviewElement} 
                             </View>
-                            <Text>({item.totalStar})</Text>
+                            <Text>({item.starCount})</Text>
                         </View>
                     </View>       
                 </View>
             </View>
 
             {/* remove and add to cart */}
-            <View className='justify-between relative'>
-                <TouchableOpacity
-                    className='w-[40px] h-[40px] justify-center p-[9px]'
-                >
-                    <Feather name="x" size={24} color="#9b9b9b" style={{textAlign : 'right'}} />
-                </TouchableOpacity>
-                {
-                    item.soldOut 
-                        ? null
-                        :
+            {
+                item.amount == 0 
+                    ? null
+                    :
+                        <View className='justify-between relative'>
+                            <TouchableOpacity
+                                className='w-[40px] h-[40px] justify-center p-[9px]'
+                                onPress={() => deleteItemFavorite(item.productId)}
+                            >
+                                <Feather name="x" size={24} color="#9b9b9b" style={{textAlign : 'right'}} />
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles._buttonAddToCart}
+                                onPress={() => {
+                                    setIsShowSizeInCart(true);
+                                    setInformationAddItemToCart(prevalue => ({
+                                        ...prevalue,
+                                        productId: item.productId
+                                      }));
+                                }}
                             >
                                 <Image source={icon.buttonAddToCart} style={{tintColor : '#fff', width : 14, height : 14}}/>
                             </TouchableOpacity>
-                }
-            </View>
+                        </View>
+            }
                 
             {/* text sold out */}
             {
-                item.soldOut 
+                item.amount == 0 
                     ? 
                         <View className='bg-[#fff] opacity-[0.7] absolute bottom-[-25%] w-full px-[12px] py-[4px]'>
                             <Text className='text-[#222] text-[13px] font-[400]'>Sorry, this item is currently sold out</Text>
@@ -117,13 +116,18 @@ const Render = ({item, handleClickDetailItem}) => {
             }
             {/* sold out */}
             {
-                item.soldOut 
+                item.amount == 0
                     ? 
                         <TouchableOpacity
-                            className='absolute bottom-0 h-full w-full bg-[#fff] opacity-[0.6]'
-                            onPress={() => handleClickDetailItem(item.id, item.productName)}
+                            className='absolute bottom-0 h-full w-full bg-[#fff] opacity-[0.6] items-end'
+                            onPress={() => handleClickDetailItem(item.productId, item.productName)}
                         >
-
+                            <TouchableOpacity
+                                className='w-[40px] h-[40px] justify-center p-[9px]'
+                                onPress={() => deleteItemFavorite(item.productId)}
+                            >
+                                <Feather name="x" size={24} color="#DB3022" style={{textAlign : 'right'}} />
+                            </TouchableOpacity>
                         </TouchableOpacity>
                     : null
             }
@@ -131,12 +135,12 @@ const Render = ({item, handleClickDetailItem}) => {
     )
 }
 
-const ShowOneColumn = ({dataListItem, handleClickDetailItem}) => {
+const ShowOneColumn = ({dataListItem, handleClickDetailItem, deleteItemFavorite, setIsShowSizeInCart, setInformationAddItemToCart}) => {
     return (
         <FlatList
             data={dataListItem}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => <Render item={item} handleClickDetailItem={handleClickDetailItem}/>}
+            keyExtractor={item => item.productId}
+            renderItem={({item}) => <Render item={item} handleClickDetailItem={handleClickDetailItem} deleteItemFavorite={deleteItemFavorite} setIsShowSizeInCart={setIsShowSizeInCart} setInformationAddItemToCart={setInformationAddItemToCart}/>}
             contentContainerStyle={{
                 display : 'flex',
                 gap : 22,

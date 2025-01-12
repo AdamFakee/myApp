@@ -49,7 +49,8 @@ const Render = ({item, dispatchOrder, handelCallApiDeleteItem, handleAddToFavori
                                 type : 'minus',
                                 value : {
                                     productId : item.productId,
-                                    amount : item.amount - 1
+                                    amount : item.amount - 1,
+                                    sizeName : item.sizeName
                                 }
                             })}
                         >
@@ -64,7 +65,8 @@ const Render = ({item, dispatchOrder, handelCallApiDeleteItem, handleAddToFavori
                                 type : 'plus',
                                 value : {
                                     productId : item.productId,
-                                    amount : item.amount + 1
+                                    amount : item.amount + 1,
+                                    sizeName : item.sizeName
                                 }
                             })}
                         >
@@ -102,7 +104,7 @@ const ListItemInBag = ({data, dispatchOrder, handelCallApiDeleteItem, handleAddT
     return (
         <FlatList
             data={data}
-            keyExtractor={item => item.productId}
+            keyExtractor={(item, index) => `${item.productId}-${index}`}
             renderItem={({item}) => <Render item={item} dispatchOrder={dispatchOrder} handelCallApiDeleteItem={handelCallApiDeleteItem} handleAddToFavorite={handleAddToFavorite}/>}
             contentContainerStyle={{
                 gap : 24,             

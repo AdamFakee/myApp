@@ -18,6 +18,7 @@ const GlobalProvider = ({ children }) => {
         const token = await asyncStorageService.getObjectData('token');
         if(token) {
           setIsLogged(true);
+          setToken(token)
         }
       } catch (error) {
         console.error('Lỗi khi lấy token:', error.message);
@@ -27,7 +28,6 @@ const GlobalProvider = ({ children }) => {
 
     fetchToken();
   }, []);
-
 
   return (
     <GlobalContext.Provider

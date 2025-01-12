@@ -42,25 +42,34 @@ const starCount = [
   ]
 ];
 
-const Render = ({item, handleClickDetailItem}) => {
-  const starReviewElement = starCount[Math.floor(item.averageStar - 1)]
+const Render = ({item, handleClickDetailItem, deleteItemFavorite, isLastItem, setIsShowSizeInCart, setInformationAddItemToCart}) => {
+  const starReviewElement = starCount[Math.floor(item.starAverage - 1)]
   return (
     <TouchableOpacity 
       activeOpacity={0.6}
-      style={styles._item}
-      onPress={() => handleClickDetailItem(item.id, item.productName)}
+      style={{
+        ...styles._item, flex : isLastItem ? 0.5 : 1
+      }}
+      onPress={() => handleClickDetailItem(item.productId, item.productName)}
     >
       {/* img */}
-      <View style={{flex : 3, position : 'relative'}}>
+      <View style={{flex : 3, position : 'relative', alignItems : 'flex-end'}}>
         <Image 
-          source={item.image}
+          source={{uri : item.imageMain}}
           style={styles._image}
         />
         {
-          item.soldOut == false 
+          item.amount > 0 
             ? 
               <TouchableOpacity
                 style={styles._buttonAddToCart}
+                onPress={() => {
+                  setIsShowSizeInCart(true);
+                  setInformationAddItemToCart(prevalue => ({
+                    ...prevalue,
+                    productId: item.productId
+                  }));
+                }}
               >
                 <Image source={icon.buttonAddToCart} style={{tintColor : '#fff', width : 14, height : 14}}/>
               </TouchableOpacity>
@@ -68,6 +77,18 @@ const Render = ({item, handleClickDetailItem}) => {
               <View className='bg-[#fff] opacity-[0.7] absolute bottom-0 w-full px-[12px] py-[4px]'>
                 <Text className='text-[#222] text-[13px] font-[400]'>Sorry, this item is currently sold out</Text>
               </View>
+        }
+        
+        {
+          item.amount > 0
+            ?
+              <TouchableOpacity
+                className='w-[40px] h-[40px] justify-center p-[9px] absolute top-0 '
+                onPress={() => deleteItemFavorite(item.productId)}
+              >
+                <Feather name="x" size={24} color="#DB3022" style={{textAlign : 'right'}} />
+              </TouchableOpacity>
+            : null
         }
         
       </View>
@@ -79,33 +100,29 @@ const Render = ({item, handleClickDetailItem}) => {
           <View className='flex-row items-center'>
             {starReviewElement} 
           </View>
-          <Text className='text-[14px] text-[#9B9B9B] font-[400]'>({item.totalStar})</Text>
+          <Text className='text-[14px] text-[#9B9B9B] font-[400]'>({item.starCount})</Text>
         </View>
         {/* shop name */}
         <Text className='text-[#9B9B9B] text-[14px] font-[400]'>{item.shopName}</Text>  
         {/* product name  */}
         <Text className='text-[#222] text-[18px] font-[500]'>{item.productName}</Text>    
-        {/* color size */}
-        <View style={styles._colorSize}>
-          <Text className='text-[#9B9B9B] text-[14px] font-[400]'>
-            Color: <Text className='text-[#222] text-[14px] font-[500] ml-[5px]'>{item.colorName}</Text>
-          </Text>
-          <Text className='text-[#9B9B9B] text-[14px] font-[400]'>
-            Size: <Text className='text-[#222] text-[14px] font-[500] ml-[5px]'>{item.size}</Text>
-          </Text>
-        </View> 
         {/* price */}
         <Text className='text-[#222] text-[15px] font-[600]'>{item.newPrice}$</Text>
       </View>
       {/* sold out */}
       {
-        item.soldOut 
+        item.amount == 0 
           ? 
             <TouchableOpacity
-              className='absolute bottom-0 z-[10] bg-[#FFFFFF] opacity-[0.5] w-full h-full'
-              onPress={() => handleClickDetailItem(item.id, item.productName)}
+              className='absolute bottom-0 z-[10] bg-[#FFFFFF] opacity-[0.5] w-full h-full items-end'
+              onPress={() => handleClickDetailItem(item.productId, item.productName)}
             >
-          
+              <TouchableOpacity
+                className='w-[40px] h-[40px] justify-center p-[9px]'
+                onPress={() => deleteItemFavorite(item.productId)}
+              >
+                <Feather name="x" size={24} color="#DB3022" style={{textAlign : 'right'}} />
+              </TouchableOpacity>
             </TouchableOpacity>
           : null
       }
@@ -113,12 +130,12 @@ const Render = ({item, handleClickDetailItem}) => {
   )
 }
 
-const ShowTwoColumn = ({dataListItem, handleClickDetailItem}) => {
+const ShowTwoColumn = ({dataListItem, handleClickDetailItem, deleteItemFavorite, setIsShowSizeInCart, setInformationAddItemToCart}) => {
   return (
     <FlatList
       data={dataListItem}
-      keyExtractor={item => item.id}
-      renderItem={({item}) => <Render item={item} handleClickDetailItem={handleClickDetailItem}/>}
+      keyExtractor={item => item.productId}
+      renderItem={({item, index}) => <Render isLastItem={index === dataListItem.length - 1 && dataListItem.length % 2 === 1} item={item} handleClickDetailItem={handleClickDetailItem} deleteItemFavorite={deleteItemFavorite} setIsShowSizeInCart={setIsShowSizeInCart} setInformationAddItemToCart={setInformationAddItemToCart}/>}
       showsVerticalScrollIndicator={false}
       columnWrapperStyle={{
         gap : 16
@@ -143,7 +160,6 @@ const styles = StyleSheet.create({
     justifyContent : 'center',
   },
   _item : {
-    flex : 1,
     position: 'relative',
     height : 'auto',
     borderRadius : 5,
@@ -172,7 +188,6 @@ const styles = StyleSheet.create({
   },
   _image : {
     width : '100%',
-    height : '100%',
     aspectRatio : 162 / 184,
     objectFit : 'cover',
     borderRadius : 12,

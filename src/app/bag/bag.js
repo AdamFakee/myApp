@@ -7,11 +7,12 @@ import ListItemInBag from '../../components/bag.component/ListItemInBag'
 import CheckOutButton from '../../components/bag.component/CheckOutButton'
 import ChangeAmountReducer from '../../reducer/changeAmount.reducer'
 import { useEffect } from 'react'
-import EmptyBag from '../../components/bag.component/EmptyBag'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { bagLibNettwork } from '../../nettwork/lib/bag.lib'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { favoriteLibNettwork } from '../../nettwork/lib/favorite.lib'
+import Empty from '../../components/Empty'
+import { Loading } from '../../components/loading.component/loading'
 
 const Bag = () => {
   const [searchValue, setSearchValue] = useState({
@@ -20,6 +21,7 @@ const Bag = () => {
   const [isSearch, setIsSearch] = useState(false) // type on keyboard
   const [order, dispatchOrder] = useReducer(ChangeAmountReducer, []); 
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const {token, setIsLogged, isLogged} = useGlobalContext();
   const totalPrice  = useMemo(() => {
@@ -28,7 +30,6 @@ const Bag = () => {
     }, 0);
     return total;
   }, [order]);
-
   // call api show item in bag
   useFocusEffect(
     useCallback(() => {
@@ -40,30 +41,37 @@ const Bag = () => {
             return;
         }
         const headers = { 'Authorization': `Bearer ${accessToken}` };
-        bagLibNettwork.getProduct(headers)
-          .then(function (response) {
-            const {data, code} = response.data;
-            if(code == "200") {
-              dispatchOrder({
-                type : 'copy',
-                value : {
-                    data : data
-                }
-              })
-              return;
-            }
-          })
-          .catch(function (error) {
-            console.log(error.message);
-          })
+        try {
+          const response = await bagLibNettwork.getProduct(headers);
+          const {data, code} = response.data;
+          if (code == "200") {
+            dispatchOrder({
+              type: 'copy',
+              value: {
+                data: data
+              }
+            });
+          }
+        } catch (error) {
+          console.log(error.message);
+        } finally {
+          setIsLoading(true); 
+        }
       }
       fetch();
       return () => {
         isActive = false;
       };
-    }, [])
+    }, [token, isLogged])
   )
+  
   // End call api shop item in bag
+
+  useEffect(() => {
+    navigation.addListener('blur', () => {
+      setIsLoading(false)
+    })
+  }, [navigation])
 
   const handelCallApiDeleteItem = async (data) => {
     try {
@@ -80,7 +88,7 @@ const Bag = () => {
       } else {
         const deletedData = {
           productId_delete : data.productId,
-          sizeName : data.sizeName
+          sizeName_delete : data.sizeName
         }
         dispatchOrder({
           type : 'delete',
@@ -110,10 +118,11 @@ const Bag = () => {
       console.log(error.message);
     }
   }
+
+
   // call api check out
   useEffect(() => {
     if(isCheckout) {
-      console.log('call api check out');
       setIsCheckout(false);
       navigation.navigate('Success');
       dispatchOrder({
@@ -123,10 +132,16 @@ const Bag = () => {
           value : null
         }
       })
-      console.log(order)
     }
   }, [isCheckout])
   // End call api check out
+  if(!isLoading) {
+    return (
+      <SafeAreaView className='flex-1 pb-[50px] space-y-[24px] px-[16px] bg-[#f9f9f9]'>
+        <Loading/>
+      </SafeAreaView>
+    )
+  }
 
   return (
     order.length > 0 
@@ -159,7 +174,7 @@ const Bag = () => {
             <CheckOutButton isCheckout={isCheckout} setIsCheckout={setIsCheckout}/>
           </View>
         </SafeAreaView>
-      : <EmptyBag/>
+      : <Empty text='Have no item in your cart' iconName='shoppingcart'/>
   )
 }
 

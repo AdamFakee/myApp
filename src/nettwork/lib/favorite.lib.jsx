@@ -10,7 +10,11 @@ const getFavorite = (headers) => {
 }
 
 const deleteInFavorite = (data, headers) => {
-    return axiosClient.delete("/favorite/delete", JSON.stringify(data), {headers});
+    return axiosClient.delete("/favorite/deleteItem", {
+        headers,
+        data
+    });
+    // return axiosClient.delete("/favorite/delete", JSON.stringify(data), {headers});
 }
 
 export const favoriteLibNettwork = {
