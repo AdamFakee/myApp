@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import StarReview from '../../components/home.component/itemReview/StarReview'
 import img from '../../constant/img'
 import CommentReview from '../../components/home.component/itemReview/CommentReview'
@@ -8,105 +8,73 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import WriteReviewButton from '../../components/home.component/itemReview/WriteReviewButton'
 import WriteReviewBottomSheet from '../../components/home.component/itemReview/WriteReviewBottomSheet'
 import TotalInfomationRating from '../../components/home.component/itemReview/TotalInfomationRating'
+import { ratingLibNettwork } from '../../nettwork/lib/rating.lib'
+import filterRatingReducer from '../../reducer/filterRating.reducer'
+import { Loading } from '../../components/loading.component/loading'
 
 const ItemReview = () => {
-
-  // data fake
-  const dataCommentReview = [
-    {
-      id : 1,
-      fullName : 'Helene Moore',
-      star : 2,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : []
-    },
-    {
-      id : 2,
-      fullName : 'Helene Moore',
-      star : 4,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : []
-    },
-    {
-      id : 3,
-      fullName : 'Helene Moore',
-      star : 5,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : []
-    }
-  ]
-  const dataCommentReview_with_photo = [
-    {
-      id : 1,
-      fullName : 'Helene Moore',
-      star : 1,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : [
-        img.reviewPhoto, img.reviewPhoto, img.reviewPhoto
-      ]
-    },
-    {
-      id : 2,
-      fullName : 'Helene Moore',
-      star : 3,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : [
-        img.reviewPhoto, img.reviewPhoto, img.reviewPhoto
-      ]
-    },
-    {
-      id : 3,
-      fullName : 'Helene Moore',
-      star : 4,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : [
-        img.reviewPhoto, img.reviewPhoto, img.reviewPhoto
-      ]
-    },
-    {
-      id : 4,
-      fullName : 'Helene Moore',
-      star : 4,
-      avatar : img.avatar,
-      content : `The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7" and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well.`,
-      time : 'June 5, 2019',
-      imgs : [
-        img.reviewPhoto, img.reviewPhoto, img.reviewPhoto
-      ]
-    }
-  ]
-  const dataRating = {
-    averageRating : 4.3,
-    numRating : 22,
-    specificRating : [1, 4, 5, 11, 8]
-  }
-  // End data fake
-
-
-
+  const navigation = useNavigation();
   const {params} = useRoute()
   const idItem = params.idItem;
-
+  const [dataCommentReview_not_contain_photo, dispatchDataCommentReview_not_contain_photo] = useReducer(filterRatingReducer, []);
+  const [dataChart, dispatchDataChart] = useReducer(filterRatingReducer, []);
+  const [dataCommentReview_contain_photo, dispatchDataCommentReview_contain_photo] = useReducer(filterRatingReducer, []);
+  const [isLoading, setIsLoading]  = useState(false);
   const [isWriteReview, setIsWriteReview] = useState(false);
   const [isWatchWithPhoto, setIsWatchWithPhoto] = useState(false);
   // ref select size to cart
     const bottomSheetRef = useRef(null);
-  // call api
+  // call api detail 
   useEffect(() => {
-    console.log('call api take review with idItem : ', idItem)
-  }, [idItem])
+    if(isWatchWithPhoto == false) {
+      const fetch = async () => {
+        try {
+          const response = await ratingLibNettwork.detail(idItem);
+          const {code, data} = response.data;
+          if(code == 200) {
+            dispatchDataCommentReview_not_contain_photo({
+              type : 'copy',
+              value : {
+                data : data.rating_not_contain_img
+              }
+            });
+            dispatchDataCommentReview_contain_photo({
+              type : 'copy',
+              value : {
+                data : data.rating_contain_img
+              }
+            });
+            console.log(data.ratingChart['info'].avg)
+            dispatchDataChart({
+              type : 'copy',
+              value : {
+                data : data.ratingChart
+              }
+            });
+          }
+        } catch (error) {
+          console.log(error.message)
+        } finally {
+          setIsLoading(true);
+        }
+      }
+      fetch();
+    }
+  }, [idItem]);
+
+  useEffect(() => {
+    navigation.addListener('blur', () => {
+      setIsLoading(false)
+    })
+  }, [navigation])
+  if(isLoading == false) {
+    console.log('load')
+    return (
+      <SafeAreaView className='flex-1 pb-[50px] space-y-[24px] px-[16px] bg-[#f9f9f9]'>
+        <Loading/>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView className = "flex-1 px-[16px]">
@@ -114,22 +82,22 @@ const ItemReview = () => {
         {/* title */}
         <Text className='text-[#222222] text-[38px] mb-[30px] font-[700]'>Rating&Reviews</Text>
         {/* star */}
-        <StarReview dataRating={dataRating}/> 
+        <StarReview dataRating={dataChart}/> 
       </View>
 
       {/* comment review */}
       <View className='mt-[33px]' style={{flex : 4}}>
         {
           isWatchWithPhoto 
-            ? <TotalInfomationRating data={dataCommentReview_with_photo} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
-            : <TotalInfomationRating data={dataCommentReview} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
+            ? <TotalInfomationRating data={dataCommentReview_contain_photo} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
+            : <TotalInfomationRating data={dataCommentReview_not_contain_photo} isWatchWithPhoto={isWatchWithPhoto} setIsWatchWithPhoto={setIsWatchWithPhoto}/>
         }
 
         {/* infomation about review */}
         {
           isWatchWithPhoto 
-            ? <CommentReview dataCommentReview={dataCommentReview_with_photo}/>
-            : <CommentReview dataCommentReview={dataCommentReview}/>  
+            ? <CommentReview dataCommentReview={dataCommentReview_contain_photo} isContainImage={true}/>
+            : <CommentReview dataCommentReview={dataCommentReview_not_contain_photo} isContainImage={false}/>  
         }
       </View>
       {/* write review button */}

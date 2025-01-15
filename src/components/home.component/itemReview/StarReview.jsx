@@ -7,8 +7,8 @@ const StarReview = ({dataRating}) => {
     <View className='space-x-[28px] w-full flex-row'>
         {/* sum review */}
         <View className='space-y-[16px] items-center'>
-          <Text className='text-[#222222] text-[38px] font-[700]'>{dataRating.averageRating}</Text>
-          <Text className='text-[#9B9B9B] text-[20px] font-[400]'>{dataRating.numRating} ratings</Text>
+          <Text className='text-[#222222] text-[38px] font-[700]'>{dataRating['info'].avg}</Text>
+          <Text className='text-[#9B9B9B] text-[20px] font-[400]'>{dataRating['info'].cnt} ratings</Text>
         </View>
 
         {/* star cnt */}
@@ -25,7 +25,7 @@ const StarReview = ({dataRating}) => {
             {/* bar */}
             <View className='bg-[#DB3022] h-[8px] w-[114px] rounded-[4px]'></View>
             {/* number of star */}
-            <Text>{dataRating.specificRating[4]}</Text>
+            <Text>{dataRating[5].cnt}</Text>
           </View>
           <View className='flex-row items-center space-x-[20px]'>
             <View className='flex-row justify-end'>
@@ -41,7 +41,7 @@ const StarReview = ({dataRating}) => {
               <View className='bg-[#DB3022] h-[8px] w-[60px] rounded-[4px]'></View>
             </View>
             {/* number of star */}
-            <Text>{dataRating.specificRating[3]}</Text>
+            <Text>{dataRating[4].cnt}</Text>
           </View>
           <View className='flex-row items-center space-x-[20px]'>
             <View className='flex-row justify-end'>
@@ -57,7 +57,7 @@ const StarReview = ({dataRating}) => {
               <View className='bg-[#DB3022] h-[8px] w-[45px] rounded-[4px]'></View>
             </View>
             {/* number of star */}
-            <Text>{dataRating.specificRating[2]}</Text>
+            <Text>{dataRating[3].cnt}</Text>
           </View>
           <View className='flex-row items-center space-x-[20px]'>
             <View className='flex-row justify-end'>
@@ -73,7 +73,7 @@ const StarReview = ({dataRating}) => {
               <View className='bg-[#DB3022] h-[8px] w-[30px] rounded-[4px]'></View>
             </View>
             {/* number of star */}
-            <Text>{dataRating.specificRating[1]}</Text>
+            <Text>{dataRating[2].cnt}</Text>
           </View>
           <View className='flex-row items-center space-x-[20px]'>
             <View className='flex-row justify-end'>
@@ -89,7 +89,7 @@ const StarReview = ({dataRating}) => {
               <View className='bg-[#DB3022] h-[8px] w-[15px] rounded-[4px]'></View>
             </View>
             {/* number of star */}
-            <Text>{dataRating.specificRating[0]}</Text>
+            <Text>{dataRating[1].cnt}</Text>
           </View>
         </View>
       </View>

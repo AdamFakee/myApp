@@ -5,7 +5,8 @@ import StarRating from './bottomSheet/StarRating';
 import BottomSubmit from './bottomSheet/BottomSubmit';
 import ModalCamera from './bottomSheet/ModalCamera';
 import WriteContent from './bottomSheet/WriteContent';
-
+import { ratingLibNettwork } from '../../../nettwork/lib/rating.lib';
+// import formData from 'form-data';
 
 const WriteReviewBottomSheet = ({bottomSheetRef, isWriteReview, setIsWriteReview}) => {
 
@@ -16,12 +17,33 @@ const WriteReviewBottomSheet = ({bottomSheetRef, isWriteReview, setIsWriteReview
         content : '',
         imgs : []
     })
+
     const [isSubmit, setIsSubmit] = useState(false);
     
     // call api
     useEffect(() => {
         if(isSubmit) {
-            console.log('call api : ', formRatingReview)
+            const body = new FormData();
+            body.append('star', 5);
+            body.append('content', 'This is my review');
+            body.append('imgs', {
+                name: new Date() + '_profile',
+                uri: formRatingReview.imgs[0],
+                type: 'image/jpg',
+            });
+            for (let pair of body.entries()) {
+                console.log(`${pair[0]}:`, pair[1]);
+            }
+            const fetch = async () => {
+                try {
+                    const response = await ratingLibNettwork.create(body);
+                    const data = response.data;
+                    console.log(data);
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+            fetch();
             setIsWriteReview(false)
             setIsSubmit(false)
         }

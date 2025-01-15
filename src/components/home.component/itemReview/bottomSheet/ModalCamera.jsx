@@ -38,7 +38,9 @@ const ModalCamera = ({isAddPhoto, setIsAddPhoto, setFormRatingReview, formRating
         }
         // add result into listImgs
         if(result) {
+            console.log(result)
             const fomat = result.assets[0].uri; // take url
+            console.log('tye : ', typeof result.assets[0].uri)
             setFormRatingReview({
                 ...formRatingReview,
                 imgs : [...formRatingReview.imgs, fomat]

@@ -1,6 +1,8 @@
 import { View, Text, FlatList, Image, ScrollView, StyleSheet } from 'react-native'
 import React from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
+import img from '../../../constant/img';
+import Empty from '../../Empty';
 
 // mảng chứa số sao đánh giágiá
 const starCount = [
@@ -42,14 +44,13 @@ const starCount = [
   ];
   
 
-const Render = ({item}) => {
-    const isContainImage = item.imgs.length > 0 || false;
+const Render = ({item, isContainImage}) => {
     const starReviewElement = starCount[item.star - 1]
     return (
         <View className=' bg-[#fff] rounded-[8px] relative p-[24px] mx-[13px]'>
             {/* avatar */}
             <View className='absolute top-[-8%] left-[-5%] w-[32px] h-[32px] z-[10]'>
-                <Image source={item.avatar}/>
+                <Image source={img.avatar}/>
             </View>
             {/* information about author and comment review */}
             <View className='flex-row w-full justify-between my-[10px] items-end'>
@@ -60,12 +61,12 @@ const Render = ({item}) => {
                         {starReviewElement}
                     </View>
                 </View>
-                <Text className='text-[#9B9B9B] text-[14px] font-[400]'>{item.time}</Text>
+                <Text className='text-[#9B9B9B] text-[14px] font-[400]'>22/2</Text>
             </View>
 
             {/* content review*/}
             <View>
-                <Text className='text-[#222] text-[14px] font-[400] leading-[21px] pb-[16px]'>{item.content}</Text>
+                <Text className='text-[#222] text-[14px] font-[400] leading-[21px] pb-[16px]'>{item.detail}</Text>
             </View>
 
             {/* img */}
@@ -77,9 +78,9 @@ const Render = ({item}) => {
                         showsHorizontalScrollIndicator={false}
                     >
                         {
-                            item.imgs.map((imgUrl, index) => 
+                            item.imgArray.map((imgUrl, index) => 
                                 <Image
-                                    source={imgUrl}
+                                    source={{uri : imgUrl}}
                                     key={index}
                                     className='h-[104px] w-[104px] rounded-[8px]'
                                 />
@@ -92,22 +93,25 @@ const Render = ({item}) => {
     )
 }
 
-const CommentReview = ({dataCommentReview}) => {
+const CommentReview = ({dataCommentReview, isContainImage}) => {
+    const haveReview = dataCommentReview.length > 0;
     return (
-        <FlatList
-            data = {dataCommentReview}
-            keyExtractor={(item) => item.id}
-            renderItem={({item}) => {
-                return <Render item = {item}/>
-            }}
-            ItemSeparatorComponent={() => <View className='my-[15px]'></View>}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                marginTop : 16,
-                paddingBottom : 80,
-            }}
-        />
-
+            haveReview == true
+                ?
+                    <FlatList
+                        data = {dataCommentReview}
+                        keyExtractor={(item) => item.ratingId}
+                        renderItem={({item}) => {
+                            return <Render item = {item} isContainImage={isContainImage}/>
+                        }}
+                        ItemSeparatorComponent={() => <View className='my-[15px]'></View>}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            marginTop : 16,
+                            paddingBottom : 80,
+                        }}
+                    />
+                : <Empty iconName='ellipsis1' text='opps have no rating'/>
     )
 }
 
