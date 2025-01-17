@@ -9,22 +9,22 @@ const ColorFilter = ({title, dbColor, listColorChoice, dispatchListColorChoice})
           <FlatList
             data={dbColor}
             scrollEnabled={false}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item}
             horizontal
             ItemSeparatorComponent={() => <TouchableOpacity className='mx-[9px]'></TouchableOpacity>}
             renderItem={({item}) => {
               return (
                 <TouchableOpacity onPress={() => {
-                  listColorChoice.includes(item.id) ? dispatchListColorChoice({
+                  listColorChoice.includes(item) ? dispatchListColorChoice({
                     type : 'delete',
-                    value : item.id,
+                    value : item,
                   }) : dispatchListColorChoice({
                     type : 'add',
-                    value : item.id,
+                    value : item,
                   })
                 }}>
-                  <View className={`h-[44px] w-[44px] rounded-[50%] border-[1px] ${listColorChoice.includes(item.id) ? 'border-[#DB3022]' : 'border-0'} flex justify-center items-center`}>
-                    <View className={`h-[36px] w-[36px] rounded-[50%] bg-[${item.color}]`}></View>
+                  <View className={`h-[44px] w-[44px] rounded-[50%] border-[1px] ${listColorChoice.includes(item) ? 'border-[#DB3022]' : 'border-0'} flex justify-center items-center`}>
+                    <View className={`h-[36px] w-[36px] rounded-[50%]`} style={{ backgroundColor: item }}></View>
                   </View>
                 </TouchableOpacity>
               )

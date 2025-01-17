@@ -6,12 +6,20 @@ import ShowItemTwoColumn from '../../components/shop.component/categoryDetail.sh
 import HeaderTop from '../../components/shop.component/categoryDetail.shop.component/HeaderTop'
 import img from '../../constant/img'
 import CustomBottomSheetModal from '../../components/shop.component/categoryDetail.shop.component/BottomSheetModal'
+import { shopLibNettwork } from '../../nettwork/lib/shop.lib'
+import { Loading } from '../../components/loading.component/loading'
+import Empty from '../../components/Empty'
+import { useShopContext } from '../../context/ShopProvider'
 
 
 const Catalog = () => {
   // show one or two column
   const [isShowOneColumn, setIsShowOneColumn] = useState(false);
-
+  const [isLoadding, setIsLoadding] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [product, setProduct] = useState([]);
+  const [headerTitle, setHeaderTitle] = useState('All');
+  const {isConfirm, setIsConfirm, listColor, listSize, listCategory, listBrand, price} = useShopContext();
   // search item
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   // call api => lấy cái đầu tiên là được, còn đây để tạmtạm
@@ -19,29 +27,7 @@ const Catalog = () => {
     id : 4,
     title : 'Price: lowest to high'
   });
-  // data fake
-  const categories = [
-    {
-      id:1,
-      title : "t-shirts"
-    },
-    {
-      id:2,
-      title : "t-shirts"
-    },
-    {
-      id:3,
-      title : "t-shirts"
-    },
-    {
-      id:4,
-      title : "t-shirts"
-    },
-    {
-      id:5,
-      title : "t-shirts"
-    }
-  ]
+
   const filterSorted = [
     {
       id : 1,
@@ -66,19 +52,55 @@ const Catalog = () => {
   ]
   // End data fake
 
+  // call Api
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const response = await shopLibNettwork.getAllProduct();
+        const {data, code} = response.data;
+        if(code == 200) {
+          const {categories, products} = data;
+          setCategory(categories);
+          setProduct(products);
+        }
+      } catch (error) {
+        setProduct([])
+      } finally {
+        setIsLoadding(true);
+      }
+    }
+    fetch();
+  }, [])
+
+
   // set header title 
-  const titleHeader = "women's top"; // static title
   const navigation = useNavigation();
 
   // set header title
   useEffect(() => {
-    if (titleHeader) {
-      navigation.setOptions({
-        headerTitle: titleHeader,    
-      });
-    }
-  }, [titleHeader]); 
+    navigation.setOptions({
+      headerTitle: headerTitle,    
+    });
+    
+  }, [headerTitle]); 
 
+  const fetch = async (categoryName) => {
+    setIsLoadding(false);
+    try {
+      const response = await shopLibNettwork.getProductByCategoryName(categoryName);
+      const {data, code} = response.data;
+      if(code == 200) {
+        const products = data.products;
+        setProduct(products);
+      }
+    } catch (error) {
+      console.log(error)
+
+      setProduct([])
+    } finally {
+      setIsLoadding(true);
+    }
+  }
   // set search in header
   useEffect(() => {
     {
@@ -135,6 +157,31 @@ const Catalog = () => {
   const handleClickFilter = () => {
     navigation.navigate('Filter');
   }
+  // filter call api
+  useEffect(() => {
+    if(isConfirm) {
+      const data = {
+        price : price,
+        color : listColor,
+        size : listSize,
+        category : listCategory,
+        brand : listBrand
+      }
+      const fetch = async (filterData) => {
+        try {
+          const response = await shopLibNettwork.getProductByFilter(filterData);
+          const {data, code} = response.data;
+          if(code == 200) {
+            setProduct(data);
+          }
+        } catch (error) {
+          setProduct([])
+        }
+      }
+      fetch(data)
+      setIsConfirm(false);
+    }
+  }, [isConfirm])
 
   // ref
   const bottomSheetModalRef = useRef(null); 
@@ -149,16 +196,29 @@ const Catalog = () => {
     setFilterSortedTitle(item);
   }
 
+  if(!isLoadding) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Loading/>
+      </View>
+    )
+  }
+
   // renders
   return (
     <View className="flex-1">
-      <HeaderTop isShowOneColumn={isShowOneColumn} setIsShowOneColumn={setIsShowOneColumn} categories={categories} handleClickFilter={handleClickFilter} handlePresentModalPress={handlePresentModalPress} filterSortedTitle={filterSortedTitle}/>
+      <HeaderTop isShowOneColumn={isShowOneColumn} setIsShowOneColumn={setIsShowOneColumn} categories={category} handleClickFilter={handleClickFilter} handlePresentModalPress={handlePresentModalPress} filterSortedTitle={filterSortedTitle} setHeaderTitle={setHeaderTitle} fetch={fetch}/>
       {/* product item */}
-      <View className='px-[16px] mt-[16px] flex-1'>
-        {
-          isShowOneColumn == false ? <ShowItemOneColumn handleClickDetailItem={handleClickDetailItem}/> : <ShowItemTwoColumn handleClickDetailItem={handleClickDetailItem}/>
-        }
-      </View>
+      {
+        product.length > 0 
+          ? 
+            <View className='px-[16px] mt-[16px] flex-1'>
+              {
+                isShowOneColumn == false ? <ShowItemOneColumn handleClickDetailItem={handleClickDetailItem} product = {product}/> : <ShowItemTwoColumn handleClickDetailItem={handleClickDetailItem} product = {product}/>
+              }
+            </View>
+          : <Empty text={`have no item`} iconName={'meh'}/>
+      }
       <CustomBottomSheetModal filterSorted={filterSorted} bottomSheetModalRef={bottomSheetModalRef} filterSortedTitle={filterSortedTitle} handleChooseSortedType={handleChooseSortedType}/>
     </View>
   );

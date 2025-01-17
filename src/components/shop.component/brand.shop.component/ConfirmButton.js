@@ -5,7 +5,7 @@ const ConfirmButton = ({isApply, setIsApply, isDiscard, setIsDiscard}) => {
   return (
     <View className={`bg-[#f9f9f9] h-[104px] py-[24px] px-[16px] flex flex-row items-center space-x-[23px]`} >
       <TouchableOpacity 
-        onPress={() => setIsDiscard(!isDiscard)}
+        onPress={() => setIsDiscard(true)}
         className='w-[160px] h-[36px] border-[#222222] border-[1px] rounded-[24px]'
       >
         <View className='h-full flex flex-row justify-center items-center'>
@@ -13,7 +13,7 @@ const ConfirmButton = ({isApply, setIsApply, isDiscard, setIsDiscard}) => {
         </View>
       </TouchableOpacity>
       <TouchableOpacity 
-        onPress={() => setIsApply(!isApply)}
+        onPress={() => setIsApply(true)}
         className='w-[160px] h-[36px] bg-[#DB3022] border-0 rounded-[24px]'
       >
         <View className='h-full flex flex-row justify-center items-center'>

@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react
 import React from 'react'
 import img from '../../../constant/img'
 
-const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClickFilter, handlePresentModalPress, filterSortedTitle}) => {
+const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClickFilter, handlePresentModalPress, filterSortedTitle, setHeaderTitle, fetch}) => {
   return (
     <View 
         className='py-[10px] px-[16px] bg-[#fff]'
@@ -12,11 +12,17 @@ const HeaderTop = ({isShowOneColumn, setIsShowOneColumn, categories, handleClick
         <View>
             <FlatList
                 data={categories}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({item}) => {
                     return (
-                        <TouchableOpacity className='h-[30px] min-w-[100px] inline-flex justify-center items-center bg-[#222222] rounded-[29px]'>
-                            <Text className='font-[500] text-[#fff] text-[14px] capitalize'>{item.title}</Text>
+                        <TouchableOpacity 
+                            onPress={() => {
+                                setHeaderTitle(item);
+                                fetch(item)
+                            }}
+                            className='h-[30px] min-w-[100px] inline-flex justify-center items-center bg-[#222222] rounded-[29px]'
+                        >
+                            <Text className='font-[500] text-[#fff] text-[14px] capitalize'>{item}</Text>
                         </TouchableOpacity>
                     )
                 }}

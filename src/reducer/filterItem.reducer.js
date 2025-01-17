@@ -6,7 +6,7 @@ const filterItemReducer = (state, action) => {
       case "delete":
         return state.filter(item => item !== action.value); 
       case "delete_object":
-        return state.filter(item => item.id !== action.value); 
+        return state.filter(item => item !== action.value); 
       case "reset":
         return [];
       default:

@@ -22,15 +22,6 @@ const ShopProvider = ({children}) => {
             maxPrice : 999999999999,
         })
     };
-    // call api
-    useEffect(() => {
-        console.log('price :  ', price)
-        console.log('color :  ', listColor)
-        console.log('size :  ', listSize)
-        console.log('category :  ', listCategory)
-        console.log('brand :  ', listBrand)
-        console.log('call api filter');
-    }, [isConfirm])
     
 
 

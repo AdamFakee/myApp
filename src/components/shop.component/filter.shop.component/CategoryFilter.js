@@ -12,7 +12,7 @@ const CategoryFilter = ({title, dbCategory, listCategoryChoice, dispatchListCate
             <FlatList
                 data={dbCategory}
                 scrollEnabled={false}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item}
                 numColumns={3}
                 columnWrapperStyle = {{
                     justifyContent: 'flex-start',
@@ -23,19 +23,19 @@ const CategoryFilter = ({title, dbCategory, listCategoryChoice, dispatchListCate
                 renderItem={({item}) => {
                     return (
                     <TouchableOpacity onPress={() => {
-                        listCategoryChoice.includes(item.id) ? dispatchListCategoryChoice({
+                        listCategoryChoice.includes(item) ? dispatchListCategoryChoice({
                             type : 'delete',
-                            value : item.id,
+                            value : item,
                         }) : dispatchListCategoryChoice({
                                 type : 'add',
-                                value : item.id,
+                                value : item,
                             })
                     }}>
                         <View 
-                            className={`h-[40px] rounded-[8px] justify-center flex items-center flex-row ${listCategoryChoice.includes(item.id) ? 'bg-[#DB3022]' : 'bg-transparent border-[0.4px] border-[#9B9B9B]'}`}
+                            className={`h-[40px] rounded-[8px] justify-center flex items-center flex-row ${listCategoryChoice.includes(item) ? 'bg-[#DB3022]' : 'bg-transparent border-[0.4px] border-[#9B9B9B]'}`}
                             style={{width:widthItem}}
                         >
-                            <Text className={`capitalize font-[500] text-[16px] ${listCategoryChoice.includes(item.id) ? 'text-[#FFFFFF]' : 'text-[#222222]'} `}>{item.title}</Text>
+                            <Text className={`capitalize font-[500] text-[16px] ${listCategoryChoice.includes(item) ? 'text-[#FFFFFF]' : 'text-[#222222]'} `}>{item}</Text>
                         </View>
                     </TouchableOpacity>
                     )

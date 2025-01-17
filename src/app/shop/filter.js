@@ -10,82 +10,13 @@ import { useShopContext } from '../../context/ShopProvider';
 import { ScrollView, View } from 'react-native';
 import ConfirmButton from '../../components/shop.component/brand.shop.component/ConfirmButton';
 import PriceSlide from '../../components/shop.component/filter.shop.component/PriceSlide';
+import { shopLibNettwork } from '../../nettwork/lib/shop.lib';
+import { Loading } from '../../components/loading.component/loading';
 
 
 
 const Filter = () => {
-  // db fake 
-  const dbColor = [
-    {
-      id : 1,
-      color : '#222222' 
-    },
-    {
-      id : 2,
-      color : '#F6F6F6'
-    },
-    {
-      id : 3,
-      color : '#B82222'
-    },
-    {
-      id : 4,
-      color : '#BEA9A9'
-    },
-    {
-      id : 5,
-      color : '#E28D'
-    },
-    {
-      id : 6,
-      color : '#151867'
-    }
-  ]
-  const dbSize = [
-    {
-      id : 1,
-      title : 'XS' 
-    },
-    {
-      id : 2,
-      title : 'S' 
-    },
-    {
-      id : 3,
-      title : 'M' 
-    },
-    {
-      id : 4,
-      title : 'L' 
-    },
-    {
-      id : 5,
-      title : 'XL' 
-    }
-  ]
-  const dbCategory = [
-    {
-      id : 1,
-      title : 'all' 
-    },
-    {
-      id : 2,
-      title : 'women' 
-    },
-    {
-      id : 3,
-      title : 'men' 
-    },
-    {
-      id : 4,
-      title : 'boys' 
-    },
-    {
-      id : 5,
-      title : 'gilrs' 
-    }
-  ]
-  // End db
+ 
 
   // hidden tabber when are in this screen
   const navigation = useNavigation();
@@ -109,9 +40,11 @@ const Filter = () => {
   const [listColorChoice, dispatchListColorChoice] = useReducer(filterItemReducer, listColor);
   const [listSizeChoice, dispatchListSizeChoice] = useReducer(filterItemReducer, listSize);
   const [listCategoryChoice, dispatchListCategoryChoice] = useReducer(filterItemReducer, listCategory);
-  const [isApply, setIsApply] = useState(false);
   const [isDiscard, setIsDiscard] = useState(false);
-
+  const [color, setColor] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [size, setSize] = useState([]);
+  const [isLoadding, setIsLoadding] = useState(false);
   useEffect(() => {
       setListCategory(listCategoryChoice);
     }, [listCategoryChoice]);
@@ -126,14 +59,33 @@ const Filter = () => {
     navigation.navigate('Brand');
   }
 
-
   useEffect(() => {
-    if(isApply) {
-      setIsConfirm(!isConfirm)
-      navigation.replace('Catalog');
-      setIsApply(false)
+    const fetch = async () => {
+      setIsLoadding(false);
+      try {
+        const response = await shopLibNettwork.getAllFilter();
+        const {data, code} = response.data;
+
+        if(code == 200) {
+          const {colors, categories, sizes} = data;
+          setCategory(categories);
+          setColor(colors);
+          setSize(sizes)
+        }
+
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setIsLoadding(true);
+      }
     }
-  }, [isApply]);
+    fetch()
+  }, [])
+  useEffect(() => {
+    if(isConfirm) {
+      navigation.goBack('Catalog');
+    }
+  }, [isConfirm]);
   useEffect(() => {
     if(isDiscard) {
       resetAllStates();
@@ -151,25 +103,33 @@ const Filter = () => {
     }
   }, [isDiscard]);
 
+  if(!isLoadding) {
+    return (
+      <SafeAreaView className='flex-1 justify-center items-center'>
+        <Loading/>
+      </SafeAreaView>
+    )
+  }
+
   return (
     <SafeAreaView className='flex-1'>
       <ScrollView className='flex-1' >
         {/* price slide */}
-        <PriceSlide minPrice={0} maxPrice={1000} isApply={isApply} setPrice={setPrice} price={price} setIsApply={setIsApply}/>
+        <PriceSlide minPrice={0} maxPrice={130} isApply={isConfirm} setPrice={setPrice} price={price} setIsApply={isConfirm}/>
 
         {/* color */}
-        <ColorFilter dbColor={dbColor} title='color' listColorChoice={listColorChoice} dispatchListColorChoice={dispatchListColorChoice}/>
+        <ColorFilter dbColor={color} title='color' listColorChoice={listColorChoice} dispatchListColorChoice={dispatchListColorChoice}/>
 
         {/* size */}
-        <SizeFilter dbSize={dbSize} title='size' listSizeChoice={listSizeChoice} dispatchListSizeChoice={dispatchListSizeChoice}/>
+        <SizeFilter dbSize={size} title='size' listSizeChoice={listSizeChoice} dispatchListSizeChoice={dispatchListSizeChoice}/>
 
         {/* category */}
-        <CategoryFilter dbCategory={dbCategory} title='category' listCategoryChoice={listCategoryChoice} dispatchListCategoryChoice={dispatchListCategoryChoice}/>
+        <CategoryFilter dbCategory={category} title='category' listCategoryChoice={listCategoryChoice} dispatchListCategoryChoice={dispatchListCategoryChoice}/>
 
         {/* Brand */}
         <BrandFilter brandChoosen={brandChoosen} handleBrand={handleBrand}/>
       </ScrollView>
-      <ConfirmButton isApply={isApply} isDiscard={isDiscard} setIsApply={setIsApply} setIsDiscard={setIsDiscard} />
+      <ConfirmButton isApply={isConfirm} isDiscard={isDiscard} setIsApply={setIsConfirm} setIsDiscard={setIsDiscard} />
     </SafeAreaView>
   )
 }
