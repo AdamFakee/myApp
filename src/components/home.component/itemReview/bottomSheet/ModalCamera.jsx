@@ -38,12 +38,15 @@ const ModalCamera = ({isAddPhoto, setIsAddPhoto, setFormRatingReview, formRating
         }
         // add result into listImgs
         if(result) {
-            console.log(result)
-            const fomat = result.assets[0].uri; // take url
-            console.log('tye : ', typeof result.assets[0].uri)
+            const uri = result.assets[0].uri; // take url
+            const mimeType = result.assets[0].mimeType;
+            const fileName = result.assets[0].fileName;
+            const value = {
+                mimeType, fileName, uri
+            };
             setFormRatingReview({
                 ...formRatingReview,
-                imgs : [...formRatingReview.imgs, fomat]
+                imgs : [...formRatingReview.imgs, value],
             })
         } 
         setIsAddPhoto(!isAddPhoto); 
@@ -81,6 +84,7 @@ const ModalCamera = ({isAddPhoto, setIsAddPhoto, setFormRatingReview, formRating
         // add result into listImgs
         if(result) {
             const fomat = result.assets.map(asset => asset.uri); // take list uri
+            
             setFormRatingReview({
                 ...formRatingReview,
                 imgs : [...formRatingReview.imgs, ...fomat]

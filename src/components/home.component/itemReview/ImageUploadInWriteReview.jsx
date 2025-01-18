@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler'
  const Render = ({item}) => {
     return (
         <View className='w-[104px] h-[104px]'>
-            <Image source={{ uri: item }} className='w-full h-full rounded-[8px]'/>
+            <Image source={{ uri: item.uri }} className='w-full h-full rounded-[8px]'/>
         </View>
     )
 }

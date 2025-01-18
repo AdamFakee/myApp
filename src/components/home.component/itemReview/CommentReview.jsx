@@ -65,9 +65,13 @@ const Render = ({item, isContainImage}) => {
             </View>
 
             {/* content review*/}
-            <View>
-                <Text className='text-[#222] text-[14px] font-[400] leading-[21px] pb-[16px]'>{item.detail}</Text>
-            </View>
+            {
+                item.detail && (
+                    <View>
+                        <Text className='text-[#222] text-[14px] font-[400] leading-[21px] pb-[16px]'>{item.detail}</Text>
+                    </View>
+                )
+            }
 
             {/* img */}
             {
@@ -100,7 +104,7 @@ const CommentReview = ({dataCommentReview, isContainImage}) => {
                 ?
                     <FlatList
                         data = {dataCommentReview}
-                        keyExtractor={(item) => item.ratingId}
+                        keyExtractor={(item, index) => index}
                         renderItem={({item}) => {
                             return <Render item = {item} isContainImage={isContainImage}/>
                         }}

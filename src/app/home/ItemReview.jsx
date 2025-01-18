@@ -103,7 +103,7 @@ const ItemReview = () => {
       {/* write review button */}
       <WriteReviewButton isWriteReview={isWriteReview} setIsWriteReview={setIsWriteReview}/>
       {
-        isWriteReview ? <WriteReviewBottomSheet isWriteReview={isWriteReview} setIsWriteReview={setIsWriteReview} bottomSheetRef={bottomSheetRef}/> : null
+        isWriteReview ? <WriteReviewBottomSheet productId = {idItem} isWriteReview={isWriteReview} setIsWriteReview={setIsWriteReview} bottomSheetRef={bottomSheetRef} dispatchDataCommentReview_contain_photo={dispatchDataCommentReview_contain_photo} dispatchDataCommentReview_not_contain_photo={dispatchDataCommentReview_not_contain_photo}/> : null
       }
       {/* write a review bottom sheet */}
     </SafeAreaView>

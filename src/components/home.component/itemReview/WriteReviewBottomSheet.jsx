@@ -6,16 +6,17 @@ import BottomSubmit from './bottomSheet/BottomSubmit';
 import ModalCamera from './bottomSheet/ModalCamera';
 import WriteContent from './bottomSheet/WriteContent';
 import { ratingLibNettwork } from '../../../nettwork/lib/rating.lib';
+import { useGlobalContext } from '../../../context/GlobalProvider';
 // import formData from 'form-data';
 
-const WriteReviewBottomSheet = ({bottomSheetRef, isWriteReview, setIsWriteReview}) => {
-
+const WriteReviewBottomSheet = ({productId, bottomSheetRef, isWriteReview, setIsWriteReview, dispatchDataCommentReview_not_contain_photo, dispatchDataCommentReview_contain_photo}) => {
+    const {token, setIsLogged, isLogged} = useGlobalContext();
     const [isAddPhoto, setIsAddPhoto] = useState(false)
     // form submit
     const [formRatingReview, setFormRatingReview] = useState({
         star : 5,
         content : '',
-        imgs : []
+        imgs : [],
     })
 
     const [isSubmit, setIsSubmit] = useState(false);
@@ -23,29 +24,56 @@ const WriteReviewBottomSheet = ({bottomSheetRef, isWriteReview, setIsWriteReview
     // call api
     useEffect(() => {
         if(isSubmit) {
-            const body = new FormData();
-            body.append('star', 5);
-            body.append('content', 'This is my review');
-            body.append('imgs', {
-                name: new Date() + '_profile',
-                uri: formRatingReview.imgs[0],
-                type: 'image/jpg',
-            });
-            for (let pair of body.entries()) {
-                console.log(`${pair[0]}:`, pair[1]);
+            const accessToken = token.accessToken;
+            if(!accessToken || !isLogged) {
+                setIsLogged(false);
+                Alert.alert('you are logout')
+                return;
             }
-            const fetch = async () => {
+            const headers = { 'Authorization': `Bearer ${accessToken}` };
+            const body = new FormData();
+            body.append('star', formRatingReview.star);
+            body.append('content', formRatingReview.content);
+            body.append('productId', productId)
+            formRatingReview.imgs.forEach(item => {
+                body.append('imgs', {
+                    uri: item.uri, 
+                    type: item.mimeType, 
+                    name: item.fileName || `photo_${Date.now()}.jpg`, 
+                });
+            })
+            const fetch = async (dataSending, headers) => {
                 try {
-                    const response = await ratingLibNettwork.create(body);
-                    const data = response.data;
-                    console.log(data);
+                    const response = await ratingLibNettwork.create(dataSending, headers);
+                    const {code, data} = response.data;
+                    if(code == 200) {
+                        const {imgArray} = data;
+                        if(imgArray.length > 0) {
+                            dispatchDataCommentReview_contain_photo({
+                                type : 'add',
+                                value : {
+                                  imgArray : imgArray,
+                                  detail : formRatingReview.content,
+                                  star : formRatingReview.star
+                                }
+                            });
+                        } else {
+                            dispatchDataCommentReview_not_contain_photo({
+                                type : 'add',
+                                value : {
+                                  detail : formRatingReview.content,
+                                  star : formRatingReview.star
+                                }
+                            });
+                        }
+                    }
                 } catch (error) {
                     console.log(error)
                 }
             }
-            fetch();
-            setIsWriteReview(false)
+            fetch(body, headers);
             setIsSubmit(false)
+            setIsWriteReview(false)
         }
     }, [isSubmit])
 
